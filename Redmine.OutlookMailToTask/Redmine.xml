@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<customUI xmlns="http://schemas.microsoft.com/office/2009/07/customui" onLoad="Ribbon_Load">
+  <ribbon>
+    <tabs>
+      <tab idMso="TabMail">
+        <group id="redmineGroup" insertAfterMso="GroupMailRespond" label="Redmine">
+          <button id="myButton"
+                  size="large"
+                  getImage="GetIcon"
+                  getEnabled="RibbonRedmineButtonEnabled"
+                  label="Convert to task"
+                  onAction="OnMyButtonClick"
+                  screentip="Convert as Redmine task."
+                  supertip="Converts e-mail message as new task in Redmine..."
+              />
+        </group>
+      </tab>
+    </tabs>
+  </ribbon>
+  <backstage onShow="OnShow">
+
+    <tab idMso="TabInfo">
+      <firstColumn>
+        <group id="TestGrp" label="Custom functionality"  insertBeforeMso="GroupPermissions" helperText="This group contains the custom functionality.">
+          <primaryItem>
+            <button id="MyCustomButton" label="My Button" />
+          </primaryItem>
+        </group>
+      </firstColumn>
+    </tab>
+
+    <tab id="redmineTab" insertAfterMso="TabInfo" label="Redmine" title="Redmine server" >
+      <firstColumn>
+        <group id="regularGroup"
+              label="Redmine configuration"
+              helperText="You can configure your Redmine server."
+              getStyle="GetWorkStatusStyle">
+          <primaryItem>
+            <button id="RedmineSettingsButtonBig"
+                    label="Configure Redmine"
+                    getImage="GetIcon"
+                    isDefinitive="false"
+                    onAction="showSettings"
+                    screentip="Configure integration to the Redmine server."/>
+          </primaryItem>
+          <topItems>
+            <layoutContainer id="layoutOne" layoutChildren="vertical">
+              <labelControl id="labelUserName" getLabel="labelUserNameValue" getEnabled="labelUserNameEnabled"/>
+              <button id="sampleButton" label="Logout" isDefinitive="true" imageMso="FileDocumentInspect" />
+            </layoutContainer>
+          </topItems>
+        </group>
+
+      </firstColumn>
+
+    </tab>
+  </backstage>
+  <contextMenus>
+    <contextMenu idMso="ContextMenuMailItem">
+      <button id="SynchronizeMailItem" onAction="OnMyButtonClick" getImage="GetIcon" getLabel="GetConvertToRedmineLabel"/>
+    </contextMenu>
+  </contextMenus>
+</customUI>
+
