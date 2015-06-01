@@ -37,6 +37,7 @@ namespace Redmine.OutlookMailToTask
     {
         private Office.IRibbonUI ribbon;
         private bool _isRibbonButtonEnabled = false;
+        private string _userName = string.Empty;
 
         public Redmine()
         {
@@ -52,9 +53,20 @@ namespace Redmine.OutlookMailToTask
             }
         }
 
-        public string labelUserNameValue(Office.IRibbonControl control) { return "Logged in as Vladimír Mach."; }
+        public string labelUserNameValue(Office.IRibbonControl control)
+        {
+            if (!string.IsNullOrEmpty(_userName))
+            {
+                return string.Format("Logged in as {0}.", _userName);
+            }
 
-        public bool labelUserNameEnabled(Office.IRibbonControl control) { return true; }
+            return string.Empty;
+        }
+
+        public bool labelUserNameEnabled(Office.IRibbonControl control)
+        {
+            return !string.IsNullOrEmpty(_userName);
+        }
 
         public bool RibbonRedmineButtonEnabled(Office.IRibbonControl control)
         {
@@ -65,6 +77,11 @@ namespace Redmine.OutlookMailToTask
         {
             _isRibbonButtonEnabled = enabled;
 
+            InvalidateRibbon();
+        }
+
+        private void InvalidateRibbon()
+        {
             if (ribbon != null)
             {
                 ribbon.Invalidate();
@@ -73,12 +90,24 @@ namespace Redmine.OutlookMailToTask
 
         public void OnShow(object contextObject)
         {
-
+            UpdateRedmineUser();
         }
 
         public Office.BackstageGroupStyle GetWorkStatusStyle(Office.IRibbonControl control)
         {
-            return Office.BackstageGroupStyle.BackstageGroupStyleWarning;
+            return string.IsNullOrEmpty(_userName) ? 
+                Office.BackstageGroupStyle.BackstageGroupStyleWarning : 
+                Office.BackstageGroupStyle.BackstageGroupStyleNormal;
+        }
+
+        public void LogUserOut(Office.IRibbonControl control)
+        {
+            Settings.Default.RedmineApi = string.Empty;
+            Settings.Default.RedmineServer = string.Empty;
+            Settings.Default.Save();
+            _userName = string.Empty;
+
+            InvalidateRibbon();
         }
 
         public void ShowSettings(Office.IRibbonControl control)
@@ -97,6 +126,31 @@ namespace Redmine.OutlookMailToTask
             if (window.DialogResult.HasValue && window.DialogResult.Value)
             {
                 // do any work based on the success of the DialogResult property
+                UpdateRedmineUser();
+            }
+        }
+
+        private void UpdateRedmineUser()
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(Settings.Default.RedmineServer) == false && string.IsNullOrEmpty(Settings.Default.RedmineApi) == false)
+                {
+                    Net.Api.RedmineManager manager = new Net.Api.RedmineManager(Settings.Default.RedmineServer, Settings.Default.RedmineApi, Net.Api.MimeFormat.xml);
+                    var user = manager.GetCurrentUser();
+
+                    _userName = string.Format("{0} {1}", user.FirstName, user.LastName);
+
+                    InvalidateRibbon();
+                }
+            }
+            catch(Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine("Error: {0}", e.Message);
+
+                _userName = string.Empty;
+
+                InvalidateRibbon();
             }
         }
 

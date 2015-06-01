@@ -46,7 +46,7 @@
           <topItems>
             <layoutContainer id="layoutOne" layoutChildren="vertical">
               <labelControl id="labelUserName" getLabel="labelUserNameValue" getEnabled="labelUserNameEnabled"/>
-              <button id="sampleButton" label="Logout" isDefinitive="true" imageMso="FileDocumentInspect" />
+              <button id="sampleButton" label="Logout" isDefinitive="true" onAction="LogUserOut" getEnabled="labelUserNameEnabled" imageMso="FileDocumentInspect" />
             </layoutContainer>
           </topItems>
         </group>

@@ -8,6 +8,7 @@
 // PARTICULAR PURPOSE.
 //-----------------------------------------------------------------------
 
+using Redmine.OutlookMailToTask.Properties;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +32,47 @@ namespace Redmine.OutlookMailToTask
         public OptionsWindow()
         {
             InitializeComponent();
+
+            Loaded += OptionsWindow_Loaded;
+        }
+
+        private void OptionsWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (Settings.Default.RedmineApi != null)
+            {
+                apiKeyTextBox.Text = Settings.Default.RedmineApi;
+            }
+
+            if (Settings.Default.RedmineServer != null)
+            {
+                serverTextBox.Text = Settings.Default.RedmineServer;
+            }
+        }
+
+        private void buttonClose_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                // connect to redmine
+                Net.Api.RedmineManager manager = new Net.Api.RedmineManager(serverTextBox.Text, apiKeyTextBox.Text, Net.Api.MimeFormat.xml);
+
+                var user = manager.GetCurrentUser();
+                if (user.Id > 0)
+                {
+                    Settings.Default.RedmineApi = apiKeyTextBox.Text;
+                    Settings.Default.RedmineServer = serverTextBox.Text;
+
+                    Settings.Default.Save();
+
+                    DialogResult = true;
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Cannot connect to the Redmine. Please check your configuration", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+
         }
     }
 }

@@ -22,5 +22,29 @@ namespace Redmine.OutlookMailToTask.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string RedmineApi {
+            get {
+                return ((string)(this["RedmineApi"]));
+            }
+            set {
+                this["RedmineApi"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string RedmineServer {
+            get {
+                return ((string)(this["RedmineServer"]));
+            }
+            set {
+                this["RedmineServer"] = value;
+            }
+        }
     }
 }
