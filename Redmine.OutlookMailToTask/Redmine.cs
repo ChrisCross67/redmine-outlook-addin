@@ -1,6 +1,7 @@
 ﻿using Redmine.OutlookMailToTask.Properties;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -41,6 +42,7 @@ namespace Redmine.OutlookMailToTask
 
         public Redmine()
         {
+            UpdateRedmineUser();
         }
 
         public void OnMyButtonClick(Office.IRibbonControl control)
@@ -49,9 +51,109 @@ namespace Redmine.OutlookMailToTask
             {
                 Outlook.Selection sel = control.Context as Outlook.Selection;
                 Outlook.MailItem mail = sel[1];
-                MessageBox.Show(mail.Subject.ToString());
+                //MessageBox.Show(mail.Subject.ToString());
+
+                // if no settings is saved prompt user to fill it
+                if (string.IsNullOrEmpty(_userName))
+                {
+                    DoShowSettings();
+                }
+
+                // if still no password, skip it...
+                if (string.IsNullOrEmpty(_userName))
+                {
+                    return;
+                }
+
+                //if (string.IsNullOrEmpty(_userName) == false)
+                //{
+                Net.Api.RedmineManager manager = new Net.Api.RedmineManager(Settings.Default.RedmineServer, Settings.Default.RedmineApi, Net.Api.MimeFormat.xml);
+
+                Net.Api.Types.Issue issue = new Net.Api.Types.Issue();
+                issue.Subject = mail.Subject;
+                if (mail.BodyFormat == Outlook.OlBodyFormat.olFormatHTML)
+                    issue.Description = mail.HTMLBody;
+                else
+                    issue.Description = mail.Body;
+
+                issue.Project = new Net.Api.Types.Project() { Id = 1 };
+
+                //var users = manager.GetObjectList<Net.Api.Types.User>(new NameValueCollection { { "name", GetSenderSMTPAddress(mail) } });
+                //if (users.Count == 1)
+                //{
+                //issue.Author = new Net.Api.Types.IdentifiableName() { Id = users.FirstOrDefault().Id };
+                //issue.AssignedTo = new Net.Api.Types.IdentifiableName() { Id = users.FirstOrDefault().Id };
+                //}
+
+                if (mail.Attachments.Count > 0)
+                {
+                    foreach (Outlook.Attachment att in mail.Attachments)
+                    {
+                        MessageBox.Show(att.FileName);
+
+                        string tempFile = Path.GetTempFileName();
+                        att.SaveAsFile(tempFile);
+
+                        string path = att.GetTemporaryFilePath();
+                    }
+                }
+
+                //manager.CreateObject(issue);
+                //}
             }
         }
+
+        private string GetSenderSMTPAddress(Outlook.MailItem mail)
+        {
+            string PR_SMTP_ADDRESS =
+                @"http://schemas.microsoft.com/mapi/proptag/0x39FE001E";
+            if (mail == null)
+            {
+                throw new ArgumentNullException();
+            }
+            if (mail.SenderEmailType == "EX")
+            {
+                Outlook.AddressEntry sender =
+                    mail.Sender;
+                if (sender != null)
+                {
+                    //Now we have an AddressEntry representing the Sender
+                    if (sender.AddressEntryUserType ==
+                        Outlook.OlAddressEntryUserType.
+                        olExchangeUserAddressEntry
+                        || sender.AddressEntryUserType ==
+                        Outlook.OlAddressEntryUserType.
+                        olExchangeRemoteUserAddressEntry)
+                    {
+                        //Use the ExchangeUser object PrimarySMTPAddress
+                        Outlook.ExchangeUser exchUser =
+                            sender.GetExchangeUser();
+                        if (exchUser != null)
+                        {
+                            return exchUser.PrimarySmtpAddress;
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                    else
+                    {
+                        return sender.PropertyAccessor.GetProperty(
+                            PR_SMTP_ADDRESS) as string;
+                    }
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                return mail.SenderEmailAddress;
+            }
+        }
+
 
         public string labelUserNameValue(Office.IRibbonControl control)
         {
@@ -90,13 +192,13 @@ namespace Redmine.OutlookMailToTask
 
         public void OnShow(object contextObject)
         {
-            UpdateRedmineUser();
+            //UpdateRedmineUser();
         }
 
         public Office.BackstageGroupStyle GetWorkStatusStyle(Office.IRibbonControl control)
         {
-            return string.IsNullOrEmpty(_userName) ? 
-                Office.BackstageGroupStyle.BackstageGroupStyleWarning : 
+            return string.IsNullOrEmpty(_userName) ?
+                Office.BackstageGroupStyle.BackstageGroupStyleWarning :
                 Office.BackstageGroupStyle.BackstageGroupStyleNormal;
         }
 
@@ -110,7 +212,7 @@ namespace Redmine.OutlookMailToTask
             InvalidateRibbon();
         }
 
-        public void ShowSettings(Office.IRibbonControl control)
+        private void DoShowSettings()
         {
             OptionsWindow window = new OptionsWindow();
 
@@ -130,6 +232,11 @@ namespace Redmine.OutlookMailToTask
             }
         }
 
+        public void ShowSettings(Office.IRibbonControl control)
+        {
+            DoShowSettings();
+        }
+
         private void UpdateRedmineUser()
         {
             try
@@ -144,7 +251,7 @@ namespace Redmine.OutlookMailToTask
                     InvalidateRibbon();
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 System.Diagnostics.Debug.WriteLine("Error: {0}", e.Message);
 
