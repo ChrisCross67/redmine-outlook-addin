@@ -85,21 +85,36 @@ namespace Redmine.OutlookMailToTask
                 //issue.AssignedTo = new Net.Api.Types.IdentifiableName() { Id = users.FirstOrDefault().Id };
                 //}
 
+                List<Net.Api.Types.Upload> attachments = new List<Net.Api.Types.Upload>();
+
                 if (mail.Attachments.Count > 0)
                 {
                     foreach (Outlook.Attachment att in mail.Attachments)
                     {
-                        MessageBox.Show(att.FileName);
+                        //MessageBox.Show(att.FileName);
 
-                        string tempFile = Path.GetTempFileName();
-                        att.SaveAsFile(tempFile);
+                        try
+                        {
+                            string tempFile = Path.GetTempFileName();
+                            att.SaveAsFile(tempFile);
+                            var upload = manager.UploadFile(File.ReadAllBytes(tempFile));
+                            upload.FileName = att.FileName;
+                            upload.Description = att.DisplayName;
+                            upload.ContentType = System.Web.MimeMapping.GetMimeMapping(att.FileName);
 
-                        string path = att.GetTemporaryFilePath();
+                            attachments.Add(upload);
+                        }
+                        catch (Exception e)
+                        {
+                            MessageBox.Show(string.Format("Cannot upload attachment {0}. Error: {1}", att.FileName, e.Message));
+                        }
                     }
                 }
 
-                //manager.CreateObject(issue);
-                //}
+                issue.Uploads = attachments;
+                var createdIssue = manager.CreateObject(issue);
+
+                MessageBox.Show(string.Format("Created issue #{0}.",createdIssue.Id));
             }
         }
 
