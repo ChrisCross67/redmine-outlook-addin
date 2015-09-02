@@ -70,5 +70,17 @@ namespace Redmine.OutlookMailToTask.Properties {
                 this["OwnerEmailCustomFieldId"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int LastUsedProjectId {
+            get {
+                return ((int)(this["LastUsedProjectId"]));
+            }
+            set {
+                this["LastUsedProjectId"] = value;
+            }
+        }
     }
 }

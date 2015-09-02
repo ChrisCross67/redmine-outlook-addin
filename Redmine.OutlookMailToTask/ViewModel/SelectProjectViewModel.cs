@@ -51,8 +51,15 @@ namespace Redmine.OutlookMailToTask.ViewModel
                 {
                     Projects = SortProjects(t.Result);
                     FlatProjects = FlattenProjects(_projects);
+
+                    SetSelectedProject(Settings.Default.LastUsedProjectId);
                 }
             });
+        }
+
+        public void SetSelectedProject(int projectId)
+        {
+            SelectedProject = _flatProjects.Where(p => p.Id == projectId).FirstOrDefault();
         }
 
         private List<ProjectViewModel> LoadProjectsFromRedmine()

@@ -73,6 +73,7 @@ namespace Redmine.OutlookMailToTask
                 // Ask for project
                 SelectProjectWindow projectWindow = new SelectProjectWindow();
                 projectWindow.DataContext = _selectProjectViewModel;
+                _selectProjectViewModel.SetSelectedProject(Settings.Default.LastUsedProjectId);
 
                 // use WindowInteropHelper to set the Owner of our WPF window to the Outlook application window
                 System.Windows.Interop.WindowInteropHelper hwndHelper = new System.Windows.Interop.WindowInteropHelper(projectWindow);
@@ -86,6 +87,10 @@ namespace Redmine.OutlookMailToTask
                     // Cancel task
                     return;
                 }
+
+                // Save last used project id
+                Settings.Default.LastUsedProjectId = _selectProjectViewModel.SelectedProject.Id;
+                Settings.Default.Save();
 
                 //if (string.IsNullOrEmpty(_userName) == false)
                 //{
