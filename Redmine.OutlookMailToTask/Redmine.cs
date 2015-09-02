@@ -159,7 +159,7 @@ namespace Redmine.OutlookMailToTask
                     var field = new Net.Api.Types.IssueCustomField() { Id = Settings.Default.OwnerEmailCustomFieldId, Values = values }; //owner-email
                     list.Add(field);
 
-                    createdIssue.Notes = "Change ownership of the task to the original sender.";
+                    createdIssue.Notes = "Ownership of the task changed to the original sender of the e-mail.";
                     createdIssue.CustomFields = list;
 
                     manager.UpdateObject(createdIssue.Id.ToString(), createdIssue);
