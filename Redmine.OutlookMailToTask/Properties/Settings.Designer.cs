@@ -58,5 +58,17 @@ namespace Redmine.OutlookMailToTask.Properties {
                 this["OpenTaskWhenCreated"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int OwnerEmailCustomFieldId {
+            get {
+                return ((int)(this["OwnerEmailCustomFieldId"]));
+            }
+            set {
+                this["OwnerEmailCustomFieldId"] = value;
+            }
+        }
     }
 }

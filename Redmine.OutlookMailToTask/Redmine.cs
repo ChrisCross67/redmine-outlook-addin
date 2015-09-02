@@ -1,4 +1,5 @@
 ﻿using Redmine.OutlookMailToTask.Properties;
+using Redmine.OutlookMailToTask.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -39,6 +40,7 @@ namespace Redmine.OutlookMailToTask
         private Office.IRibbonUI ribbon;
         private bool _isRibbonButtonEnabled = false;
         private string _userName = string.Empty;
+        private Net.Api.Types.User _currentRedmineUser;
 
         public Redmine()
         {
@@ -67,6 +69,8 @@ namespace Redmine.OutlookMailToTask
 
                 // Ask for project
                 SelectProjectWindow projectWindow = new SelectProjectWindow();
+                SelectProjectViewModel selectProjectViewModel = new SelectProjectViewModel();
+                projectWindow.DataContext = selectProjectViewModel;
 
                 // use WindowInteropHelper to set the Owner of our WPF window to the Outlook application window
                 System.Windows.Interop.WindowInteropHelper hwndHelper = new System.Windows.Interop.WindowInteropHelper(projectWindow);
@@ -75,7 +79,7 @@ namespace Redmine.OutlookMailToTask
 
                 // show our window
                 bool? result = projectWindow.ShowDialog();
-                if (result.HasValue && result.Value == false)
+                if ((result.HasValue && result.Value == false) || selectProjectViewModel.SelectedProject == null)
                 {
                     // Cancel task
                     return;
@@ -88,17 +92,21 @@ namespace Redmine.OutlookMailToTask
                 Net.Api.Types.Issue issue = new Net.Api.Types.Issue();
                 issue.Subject = mail.Subject;
                 if (mail.BodyFormat == Outlook.OlBodyFormat.olFormatHTML)
+                {
                     issue.Description = mail.HTMLBody;
+                }
                 else
+                {
                     issue.Description = mail.Body;
+                }
 
-                issue.Project = new Net.Api.Types.Project() { Id = 1 };
+                issue.Project = new Net.Api.Types.Project() { Id = selectProjectViewModel.SelectedProject.Id };
 
                 //var users = manager.GetObjectList<Net.Api.Types.User>(new NameValueCollection { { "name", GetSenderSMTPAddress(mail) } });
                 //if (users.Count == 1)
                 //{
                 //issue.Author = new Net.Api.Types.IdentifiableName() { Id = users.FirstOrDefault().Id };
-                //issue.AssignedTo = new Net.Api.Types.IdentifiableName() { Id = users.FirstOrDefault().Id };
+                issue.AssignedTo = new Net.Api.Types.IdentifiableName() { Id = _currentRedmineUser.Id };
                 //}
 
                 List<Net.Api.Types.Upload> attachments = new List<Net.Api.Types.Upload>();
@@ -127,16 +135,36 @@ namespace Redmine.OutlookMailToTask
                     }
                 }
 
+                Net.Api.Types.Issue createdIssue = null;
                 try
                 {
                     issue.Uploads = attachments;
-                    var createdIssue = manager.CreateObject(issue);
+                    createdIssue = manager.CreateObject(issue);
                 }
                 catch
                 {
                     MessageBox.Show("Creation of the task failed.");
                     return;
                 }
+
+                // also try to add custom field
+                try
+                {
+                    var list = new List<Net.Api.Types.IssueCustomField>();
+                    var value = new Net.Api.Types.CustomFieldValue() { Info = GetSenderSMTPAddress(mail) };
+
+                    var values = new List<Net.Api.Types.CustomFieldValue>();
+                    values.Add(value);
+
+                    var field = new Net.Api.Types.IssueCustomField() { Id = Settings.Default.OwnerEmailCustomFieldId, Values = values }; //owner-email
+                    list.Add(field);
+
+                    createdIssue.Notes = "Change ownership of the task to the original sender.";
+                    createdIssue.CustomFields = list;
+
+                    manager.UpdateObject(createdIssue.Id.ToString(), createdIssue);
+                }
+                catch { }
 
                 if (Settings.Default.OpenTaskWhenCreated)
                 {
@@ -293,6 +321,7 @@ namespace Redmine.OutlookMailToTask
                     var user = manager.GetCurrentUser();
 
                     _userName = string.Format("{0} {1}", user.FirstName, user.LastName);
+                    _currentRedmineUser = user;
 
                     InvalidateRibbon();
                 }
