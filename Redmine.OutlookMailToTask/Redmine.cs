@@ -50,7 +50,7 @@ namespace Redmine.OutlookMailToTask
             if (control.Context is Outlook.Selection)
             {
                 Outlook.Selection sel = control.Context as Outlook.Selection;
-                Outlook.MailItem mail = sel[1];
+                Outlook.MailItem mail = (Outlook.MailItem)sel[1];
                 //MessageBox.Show(mail.Subject.ToString());
 
                 // if no settings is saved prompt user to fill it
@@ -62,6 +62,22 @@ namespace Redmine.OutlookMailToTask
                 // if still no password, skip it...
                 if (string.IsNullOrEmpty(_userName))
                 {
+                    return;
+                }
+
+                // Ask for project
+                SelectProjectWindow projectWindow = new SelectProjectWindow();
+
+                // use WindowInteropHelper to set the Owner of our WPF window to the Outlook application window
+                System.Windows.Interop.WindowInteropHelper hwndHelper = new System.Windows.Interop.WindowInteropHelper(projectWindow);
+
+                hwndHelper.Owner = System.Diagnostics.Process.GetCurrentProcess().MainWindowHandle; // new IntPtr(Globals.ThisAddIn.Application.ActiveWindow().WindowHandle32);
+
+                // show our window
+                bool? result = projectWindow.ShowDialog();
+                if (result.HasValue && result.Value == false)
+                {
+                    // Cancel task
                     return;
                 }
 
@@ -114,7 +130,9 @@ namespace Redmine.OutlookMailToTask
                 issue.Uploads = attachments;
                 var createdIssue = manager.CreateObject(issue);
 
-                MessageBox.Show(string.Format("Created issue #{0}.",createdIssue.Id));
+                System.Diagnostics.Process.Start(string.Format("{0}/issues/{1}", Settings.Default.RedmineServer, createdIssue.Id));
+
+                //MessageBox.Show(string.Format("Created issue #{0}.",createdIssue.Id));
             }
         }
 

@@ -1,0 +1,41 @@
+﻿<Window x:Class="Redmine.OutlookMailToTask.SelectProjectWindow"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Redmine.OutlookMailToTask"
+        xmlns:ViewModel="clr-namespace:Redmine.OutlookMailToTask.ViewModel"
+             mc:Ignorable="d" 
+        Title="Choose Redmine project..."
+             d:DesignHeight="300" d:DesignWidth="300">
+
+    <Window.DataContext>
+        <ViewModel:SelectProjectViewModel />
+    </Window.DataContext>
+
+    <DockPanel>
+        <Grid DockPanel.Dock="Bottom" Background="LightGray">
+            <StackPanel Orientation="Horizontal"  HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                <Button Height="23" Margin="12,12,12,12" Width="75"  IsCancel="True">Cancel</Button>
+                <Button Height="23" Margin="12,12,12,12" Click="buttonClose_Click" Name="buttonClose" Width="75" IsDefault="True">Save</Button>
+            </StackPanel>
+
+        </Grid>
+        <StackPanel Margin="3">
+            <TextBlock Margin="3,3,3,0">Redmine project:</TextBlock>
+            <ComboBox ItemsSource="{Binding FlatProjects}" SelectedItem="{Binding SelectedProject}" Margin="3">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <!-- Margin="{Binding Level, Converter={StaticResource LevelToMarginConverter}}" -->
+                            <TextBlock Text="{Binding Path}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+
+        </StackPanel>
+    </DockPanel>
+
+</Window>

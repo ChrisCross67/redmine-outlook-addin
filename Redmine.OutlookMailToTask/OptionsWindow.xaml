@@ -14,7 +14,7 @@
             <TextBlock Margin="3,3,3,0">Redmine server URL:</TextBlock>
             <TextBox x:Name="serverTextBox" Margin="3" />
             
-            <TextBlock Margin="3,3,3,0">Your Redmine API:</TextBlock>
+            <TextBlock Margin="3,3,3,0">Your Redmine API key:</TextBlock>
             <TextBox x:Name="apiKeyTextBox" Margin="3" />
             <TextBlock Margin="3,10,3,3" FontStyle="Italic" TextWrapping="Wrap">You can find your API key in Redmine in your account profile page in Preferences section.</TextBlock>
         </StackPanel>

@@ -190,12 +190,18 @@
     <Compile Include="ConfigurationOptions.Designer.cs">
       <DependentUpon>ConfigurationOptions.cs</DependentUpon>
     </Compile>
+    <Compile Include="EnumerableExtensions.cs" />
+    <Compile Include="Mvvm.cs" />
     <Compile Include="OptionsWindow.xaml.cs">
       <DependentUpon>OptionsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ViewModel\CustomFieldViewModel.cs" />
+    <Compile Include="ViewModel\ProjectViewModel.cs" />
+    <Compile Include="ViewModel\SelectProjectViewModel.cs" />
+    <Compile Include="ViewModel\TrackerViewModel.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -217,6 +223,9 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Redmine.cs" />
+    <Compile Include="SelectProjectWindow.xaml.cs">
+      <DependentUpon>SelectProjectWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ThisAddIn.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -242,6 +251,10 @@
     <Page Include="OptionsWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SelectProjectWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
