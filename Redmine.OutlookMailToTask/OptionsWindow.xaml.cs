@@ -47,6 +47,8 @@ namespace Redmine.OutlookMailToTask
             {
                 serverTextBox.Text = Settings.Default.RedmineServer;
             }
+
+            openTaskInBrowser.IsChecked = Settings.Default.OpenTaskWhenCreated;
         }
 
         private void buttonClose_Click(object sender, RoutedEventArgs e)
@@ -61,6 +63,7 @@ namespace Redmine.OutlookMailToTask
                 {
                     Settings.Default.RedmineApi = apiKeyTextBox.Text;
                     Settings.Default.RedmineServer = serverTextBox.Text;
+                    Settings.Default.OpenTaskWhenCreated = openTaskInBrowser.IsChecked.HasValue && openTaskInBrowser.IsChecked.Value == true;
 
                     Settings.Default.Save();
 

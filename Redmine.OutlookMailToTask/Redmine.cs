@@ -127,12 +127,25 @@ namespace Redmine.OutlookMailToTask
                     }
                 }
 
-                issue.Uploads = attachments;
-                var createdIssue = manager.CreateObject(issue);
+                try
+                {
+                    issue.Uploads = attachments;
+                    var createdIssue = manager.CreateObject(issue);
+                }
+                catch
+                {
+                    MessageBox.Show("Creation of the task failed.");
+                    return;
+                }
 
-                System.Diagnostics.Process.Start(string.Format("{0}/issues/{1}", Settings.Default.RedmineServer, createdIssue.Id));
-
-                //MessageBox.Show(string.Format("Created issue #{0}.",createdIssue.Id));
+                if (Settings.Default.OpenTaskWhenCreated)
+                {
+                    System.Diagnostics.Process.Start(string.Format("{0}/issues/{1}", Settings.Default.RedmineServer, createdIssue.Id));
+                }
+                else
+                {
+                    MessageBox.Show(string.Format("Task has been created in Redmine with ID #{0}.", createdIssue.Id));
+                }
             }
         }
 

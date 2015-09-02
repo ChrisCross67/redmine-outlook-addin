@@ -16,6 +16,9 @@
             
             <TextBlock Margin="3,3,3,0">Your Redmine API key:</TextBlock>
             <TextBox x:Name="apiKeyTextBox" Margin="3" />
+            
+            <CheckBox x:Name="openTaskInBrowser" Margin="3" Content="Open task in browser when created" />
+            
             <TextBlock Margin="3,10,3,3" FontStyle="Italic" TextWrapping="Wrap">You can find your API key in Redmine in your account profile page in Preferences section.</TextBlock>
         </StackPanel>
     </DockPanel>
