@@ -41,10 +41,13 @@ namespace Redmine.OutlookMailToTask
         private bool _isRibbonButtonEnabled = false;
         private string _userName = string.Empty;
         private Net.Api.Types.User _currentRedmineUser;
+        SelectProjectViewModel _selectProjectViewModel;
 
         public Redmine()
         {
             UpdateRedmineUser();
+
+            _selectProjectViewModel = new SelectProjectViewModel();
         }
 
         public void OnMyButtonClick(Office.IRibbonControl control)
@@ -69,8 +72,7 @@ namespace Redmine.OutlookMailToTask
 
                 // Ask for project
                 SelectProjectWindow projectWindow = new SelectProjectWindow();
-                SelectProjectViewModel selectProjectViewModel = new SelectProjectViewModel();
-                projectWindow.DataContext = selectProjectViewModel;
+                projectWindow.DataContext = _selectProjectViewModel;
 
                 // use WindowInteropHelper to set the Owner of our WPF window to the Outlook application window
                 System.Windows.Interop.WindowInteropHelper hwndHelper = new System.Windows.Interop.WindowInteropHelper(projectWindow);
@@ -79,7 +81,7 @@ namespace Redmine.OutlookMailToTask
 
                 // show our window
                 bool? result = projectWindow.ShowDialog();
-                if ((result.HasValue && result.Value == false) || selectProjectViewModel.SelectedProject == null)
+                if ((result.HasValue && result.Value == false) || _selectProjectViewModel.SelectedProject == null)
                 {
                     // Cancel task
                     return;
@@ -100,7 +102,7 @@ namespace Redmine.OutlookMailToTask
                     issue.Description = mail.Body;
                 }
 
-                issue.Project = new Net.Api.Types.Project() { Id = selectProjectViewModel.SelectedProject.Id };
+                issue.Project = new Net.Api.Types.Project() { Id = _selectProjectViewModel.SelectedProject.Id };
 
                 //var users = manager.GetObjectList<Net.Api.Types.User>(new NameValueCollection { { "name", GetSenderSMTPAddress(mail) } });
                 //if (users.Count == 1)

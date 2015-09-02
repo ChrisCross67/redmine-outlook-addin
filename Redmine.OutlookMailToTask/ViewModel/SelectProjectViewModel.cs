@@ -1,10 +1,10 @@
 ﻿using Mach.Wpf.Mvvm;
 using System.Collections.ObjectModel;
-using System.Windows;
-using Redmine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Redmine.OutlookMailToTask.Properties;
+using System.Threading.Tasks;
 
 namespace Redmine.OutlookMailToTask.ViewModel
 {
@@ -13,10 +13,7 @@ namespace Redmine.OutlookMailToTask.ViewModel
         private ObservableCollection<ProjectViewModel> _projects;
         public ObservableCollection<ProjectViewModel> Projects
         {
-            get
-            {
-                return _projects;
-            }
+            get { return _projects; }
             set
             {
                 _projects = value;
@@ -27,10 +24,7 @@ namespace Redmine.OutlookMailToTask.ViewModel
         private ProjectViewModel _selectedProject;
         public ProjectViewModel SelectedProject
         {
-            get
-            {
-                return _selectedProject;
-            }
+            get { return _selectedProject; }
             set
             {
                 _selectedProject = value;
@@ -41,10 +35,7 @@ namespace Redmine.OutlookMailToTask.ViewModel
         private ObservableCollection<ProjectViewModel> _flatProjects;
         public ObservableCollection<ProjectViewModel> FlatProjects
         {
-            get
-            {
-                return _flatProjects;
-            }
+            get { return _flatProjects; }
             set
             {
                 _flatProjects = value;
@@ -54,12 +45,24 @@ namespace Redmine.OutlookMailToTask.ViewModel
 
         public SelectProjectViewModel()
         {
+            Task.Factory.StartNew(() => LoadProjectsFromRedmine()).ContinueWith((t) =>
+            {
+                if (t.Result != null)
+                {
+                    Projects = SortProjects(t.Result);
+                    FlatProjects = FlattenProjects(_projects);
+                }
+            });
+        }
+
+        private List<ProjectViewModel> LoadProjectsFromRedmine()
+        {
             var projectsList = new List<ProjectViewModel>();
 
             try
             {
                 // connect to redmine
-                 Net.Api.RedmineManager manager = new Net.Api.RedmineManager("http://redmine.aps-holding.com/", "170139117f26a96e5952339bac48a3bffdd58f37", Net.Api.MimeFormat.xml);
+                Net.Api.RedmineManager manager = new Net.Api.RedmineManager(Settings.Default.RedmineServer, Settings.Default.RedmineApi, Net.Api.MimeFormat.xml);
 
                 var projects = manager.GetObjectList<Net.Api.Types.Project>(new System.Collections.Specialized.NameValueCollection { { "limit", "100" }, { "include", "trackers,issue_categories" } });
 
@@ -102,16 +105,13 @@ namespace Redmine.OutlookMailToTask.ViewModel
                         projectsList.Add(projectViewModel);
                     }
 
-                    _projects = SortProjects(projectsList);
-                    _flatProjects = FlattenProjects(_projects);
+                    return projectsList;
                 }
 
             }
-            catch
-            {
-                //MessageBox.Show("Cannot connect to the Redmine and load projects. Please check your configuration", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            catch { }
 
+            return null;
         }
 
         private ObservableCollection<ProjectViewModel> FlattenProjects(IList<ProjectViewModel> projects)
@@ -123,7 +123,8 @@ namespace Redmine.OutlookMailToTask.ViewModel
             getChildren = parent =>
             {
                 flatProjects.Add(parent);
-                parent.Children.ForEach(p => {
+                parent.Children.ForEach(p =>
+                {
                     getChildren(p);
                 });
             };
@@ -142,7 +143,8 @@ namespace Redmine.OutlookMailToTask.ViewModel
             setChildren = parent =>
             {
                 var childProjects = projects.Where(childItem => childItem.ParentId == parent.Id).ToList();
-                childProjects.ForEach(p => {
+                childProjects.ForEach(p =>
+                {
                     p.Level = parent.Level + 1;
                     p.Path = parent.Path + " » " + p.Name;
                 });
@@ -153,10 +155,10 @@ namespace Redmine.OutlookMailToTask.ViewModel
                 parent.Children.ForEach(setChildren);
             };
 
-            //Initialize the hierarchical list to root level items
+            // Initialize the hierarchical list to root level items
             sortedProjects = new ObservableCollection<ProjectViewModel>(projects.Where(rootItem => rootItem.ParentId == 0).ToList());
 
-            //Call the SetChildren method to set the children on each root level item.
+            // Call the SetChildren method to set the children on each root level item.
             sortedProjects.ForEach(p => p.Path = p.Name);
             sortedProjects.ForEach(setChildren);
 
