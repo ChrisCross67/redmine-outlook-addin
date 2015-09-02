@@ -7,6 +7,7 @@
         xmlns:ViewModel="clr-namespace:Redmine.OutlookMailToTask.ViewModel"
              mc:Ignorable="d" 
         Title="Choose Redmine project..."
+        Height="220" Width="300" 
              d:DesignHeight="300" d:DesignWidth="300">
 
     <Window.DataContext>
@@ -17,7 +18,7 @@
         <Grid DockPanel.Dock="Bottom" Background="LightGray">
             <StackPanel Orientation="Horizontal"  HorizontalAlignment="Right" VerticalAlignment="Bottom">
                 <Button Height="23" Margin="12,12,12,12" Width="75"  IsCancel="True">Cancel</Button>
-                <Button Height="23" Margin="12,12,12,12" Click="buttonClose_Click" Name="buttonClose" Width="75" IsDefault="True">Save</Button>
+                <Button Height="23" Margin="12,12,12,12" Click="buttonClose_Click" Name="buttonClose" Width="75" IsDefault="True">_Create Task</Button>
             </StackPanel>
 
         </Grid>
