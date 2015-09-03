@@ -205,6 +205,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ViewModel\CustomFieldViewModel.cs" />
+    <Compile Include="ViewModel\IssueCategoryViewModel.cs" />
     <Compile Include="ViewModel\ProjectViewModel.cs" />
     <Compile Include="ViewModel\SelectProjectViewModel.cs" />
     <Compile Include="ViewModel\TrackerViewModel.cs" />

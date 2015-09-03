@@ -8,7 +8,7 @@
         xmlns:Converter="clr-namespace:Redmine.OutlookMailToTask.Converters"
              mc:Ignorable="d" 
         Title="New task details"
-        Height="220" Width="300" 
+        Height="260" Width="300" 
              d:DesignHeight="300" d:DesignWidth="300">
 
     <Window.DataContext>
@@ -46,6 +46,22 @@
             <ComboBox ItemsSource="{Binding SelectedProject.Trackers}" 
                       SelectedItem="{Binding SelectedProject.Tracker}" 
                       Visibility="{Binding SelectedProject.Trackers, Converter={StaticResource CountToVisibilityConverter}}"
+                      Margin="3">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding Name}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <TextBlock Margin="3,3,3,0" 
+                       Visibility="{Binding SelectedProject.IssueCategories, Converter={StaticResource CountToVisibilityConverter}}"
+                       Text="Task category:" />
+            <ComboBox ItemsSource="{Binding SelectedProject.IssueCategories}" 
+                      SelectedItem="{Binding SelectedProject.IssueCategory}" 
+                      Visibility="{Binding SelectedProject.IssueCategories, Converter={StaticResource CountToVisibilityConverter}}"
                       Margin="3">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>

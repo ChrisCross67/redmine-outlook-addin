@@ -117,6 +117,18 @@ namespace Redmine.OutlookMailToTask.ViewModel
                             }
                         }
 
+                        if (project.IssueCategories != null)
+                        {
+                            foreach (var issueCategory in project.IssueCategories)
+                            {
+                                IssueCategoryViewModel issueCategoryViewModel = new IssueCategoryViewModel();
+                                issueCategoryViewModel.Id = issueCategory.Id;
+                                issueCategoryViewModel.Name = issueCategory.Name;
+
+                                projectViewModel.IssueCategories.Add(issueCategoryViewModel);
+                            }
+                        }
+
                         projectsList.Add(projectViewModel);
                     }
 
