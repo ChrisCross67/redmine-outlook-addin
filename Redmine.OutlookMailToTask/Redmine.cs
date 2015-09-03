@@ -52,12 +52,20 @@ namespace Redmine.OutlookMailToTask
             UpdateRedmineUser();
         }
 
-        public void OnMyButtonClick(Office.IRibbonControl control)
+        /// <summary>
+        /// Fired when user clicks on convert button
+        /// </summary>
+        public void OnConvertEmailButtonClick(Office.IRibbonControl control)
         {
             Outlook.MailItem mail = null;
             bool isOwnerSet = false;
 
-            if (control.Context is Outlook.Selection) // right click on e-mail context menu
+            if (control.Context is Outlook.Inspector) // opened message window
+            {
+                Outlook.Inspector item = control.Context as Outlook.Inspector;
+                mail = item.CurrentItem as Outlook.MailItem;
+            }
+            else if (control.Context is Outlook.Selection) // right click on e-mail context menu
             {
                 Outlook.Selection sel = control.Context as Outlook.Selection;
                 mail = (Outlook.MailItem)sel[1];

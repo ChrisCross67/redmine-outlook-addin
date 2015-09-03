@@ -9,9 +9,22 @@
                   getImage="GetIcon"
                   getEnabled="RibbonRedmineButtonEnabled"
                   label="Convert to task"
-                  onAction="OnMyButtonClick"
+                  onAction="OnConvertEmailButtonClick"
                   screentip="Convert as Redmine task."
-                  supertip="Converts e-mail message as new task in Redmine..."
+                  supertip="Converts e-mail message as new task in Redmine."
+              />
+        </group>
+      </tab>
+
+      <tab idMso="TabReadMessage">
+        <group id="redmineReadGroup" insertAfterMso="GroupRespond" label="Redmine">
+          <button id="convertEmailButton"
+                  size="large"
+                  getImage="GetIcon"
+                  label="Convert to task"
+                  onAction="OnConvertEmailButtonClick"
+                  screentip="Convert as Redmine task."
+                  supertip="Converts e-mail message as new task in Redmine."
               />
         </group>
       </tab>
