@@ -122,6 +122,16 @@ namespace Redmine.OutlookMailToTask
 
             issue.Project = new Net.Api.Types.Project() { Id = _selectProjectViewModel.SelectedProject.Id };
 
+            if (_selectProjectViewModel.SelectedProject.Tracker != null)
+            {
+                issue.Tracker = new Net.Api.Types.IdentifiableName() { Id = _selectProjectViewModel.SelectedProject.Tracker.Id };
+            }
+
+            if (_selectProjectViewModel.SelectedProject.IssueCategory != null)
+            {
+                issue.Category = new Net.Api.Types.IdentifiableName() { Id = _selectProjectViewModel.SelectedProject.IssueCategory.Id };
+            }
+
             try
             {
                 var users = manager.GetObjectList<Net.Api.Types.User>(new NameValueCollection { { "name", GetSenderSMTPAddress(mail) } });
