@@ -34,7 +34,7 @@
     <PublishUrl>publish\</PublishUrl>
     <InstallUrl />
     <TargetCulture>en</TargetCulture>
-    <ApplicationVersion>1.0.0.2</ApplicationVersion>
+    <ApplicationVersion>1.0.0.3</ApplicationVersion>
     <AutoIncrementApplicationRevision>true</AutoIncrementApplicationRevision>
     <UpdateEnabled>true</UpdateEnabled>
     <UpdateInterval>7</UpdateInterval>
@@ -134,6 +134,10 @@
   -->
   <ItemGroup>
     <Reference Include="Accessibility" />
+    <Reference Include="Mach.Wpf.Mvvm, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mach.Wpf.Mvvm.1.0.0\lib\Mach.Wpf.Mvvm.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
@@ -197,8 +201,7 @@
     </Compile>
     <Compile Include="Converters\CountToVisibilityConverter.cs" />
     <Compile Include="EnumerableExtensions.cs" />
-    <Compile Include="Mvvm.cs" />
-    <Compile Include="OptionsWindow.xaml.cs">
+    <Compile Include="View\OptionsWindow.xaml.cs">
       <DependentUpon>OptionsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -220,6 +223,7 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <None Include="app.config" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -230,7 +234,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Redmine.cs" />
-    <Compile Include="SelectProjectWindow.xaml.cs">
+    <Compile Include="View\SelectProjectWindow.xaml.cs">
       <DependentUpon>SelectProjectWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="ThisAddIn.cs">
@@ -255,11 +259,11 @@
     <None Include="Resources\RedmineLogo.png" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="OptionsWindow.xaml">
+    <Page Include="View\OptionsWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="SelectProjectWindow.xaml">
+    <Page Include="View\SelectProjectWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -269,6 +273,9 @@
       <Project>{0d9b763c-a16b-463b-bddd-0a0467dcd32e}</Project>
       <Name>redmine-net40-api</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Mach.Wpf.Mvvm.xml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

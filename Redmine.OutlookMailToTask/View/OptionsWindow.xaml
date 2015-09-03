@@ -1,7 +1,7 @@
 ﻿<Window x:Class="Redmine.OutlookMailToTask.OptionsWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="Options" Height="220" Width="300" WindowStartupLocation="CenterOwner" ShowInTaskbar="False">
+    Title="Options" Height="245" Width="300" WindowStartupLocation="CenterOwner" ShowInTaskbar="False">
     <DockPanel>
         <Grid DockPanel.Dock="Bottom" Background="LightGray">
             <StackPanel Orientation="Horizontal"  HorizontalAlignment="Right" VerticalAlignment="Bottom">
