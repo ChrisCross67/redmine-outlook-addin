@@ -47,9 +47,9 @@ namespace Redmine.OutlookMailToTask
 
         public Redmine()
         {
-            UpdateRedmineUser();
-
             _selectProjectViewModel = new SelectProjectViewModel();
+
+            UpdateRedmineUser();
         }
 
         public void OnMyButtonClick(Office.IRibbonControl control)
@@ -77,12 +77,12 @@ namespace Redmine.OutlookMailToTask
             if (string.IsNullOrEmpty(_userName))
             {
                 DoShowSettings();
-            }
 
-            // if still no password, skip it...
-            if (string.IsNullOrEmpty(_userName))
-            {
-                return;
+                // if still no password, skip it...
+                if (string.IsNullOrEmpty(_userName))
+                {
+                    return;
+                }
             }
 
             // Ask for project

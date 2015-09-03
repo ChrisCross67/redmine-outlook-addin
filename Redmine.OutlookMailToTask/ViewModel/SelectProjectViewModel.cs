@@ -43,10 +43,7 @@ namespace Redmine.OutlookMailToTask.ViewModel
             }
         }
 
-        public SelectProjectViewModel()
-        {
-            ReloadProjectsList();
-        }
+        public SelectProjectViewModel() { }
 
         public void ReloadProjectsList()
         {
