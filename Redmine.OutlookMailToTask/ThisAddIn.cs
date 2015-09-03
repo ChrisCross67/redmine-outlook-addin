@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml.Linq;
 using Outlook = Microsoft.Office.Interop.Outlook;
 using Office = Microsoft.Office.Core;
 
@@ -10,39 +6,55 @@ namespace Redmine.OutlookMailToTask
 {
     public partial class ThisAddIn
     {
-        private Redmine _ribbon; 
+        Redmine _ribbon;
+
+        // keeping references on event subscibed objects (http://stackoverflow.com/questions/14369102/event-bindings-not-always-happening-during-outlook-add-in-startup)
+        Outlook.Explorers _explorers;
+        Outlook.Explorer _activeExplorer;
+
         private void ThisAddIn_Startup(object sender, EventArgs e)
         {
-            Outlook.Application oOutlook = Globals.ThisAddIn.Application;
-            //oOutlook.OptionsPagesAdd += new Outlook.ApplicationEvents_11_OptionsPagesAddEventHandler(Application_OptionsPagesAdd);
-            if (oOutlook.ActiveExplorer() != null)
+            _explorers = Application.Explorers;
+            _explorers.NewExplorer += new Outlook.ExplorersEvents_NewExplorerEventHandler(NewExplorerEventHandler);
+
+            _activeExplorer = Application.ActiveExplorer();
+            _activeExplorer.SelectionChange += new Outlook.ExplorerEvents_10_SelectionChangeEventHandler(ExplorerSelectionChange);
+        }
+
+        public void NewExplorerEventHandler(Outlook.Explorer explorer)
+        {
+            if (explorer != null)
             {
-                oOutlook.ActiveExplorer().SelectionChange += ThisAddIn_SelectionChange;
+                _activeExplorer = explorer;
+
+                //set up event handler so our add-in can respond when a new item is selected in the Outlook explorer window
+                _activeExplorer.SelectionChange += new Outlook.ExplorerEvents_10_SelectionChangeEventHandler(ExplorerSelectionChange);
             }
         }
 
-        private void ThisAddIn_SelectionChange()
+        private void ExplorerSelectionChange()
         {
-            bool enabled = Globals.ThisAddIn.Application.ActiveExplorer().Selection.Count == 1;
+            _activeExplorer = Application.ActiveExplorer();
+            if (_activeExplorer == null) { return; }
+            Outlook.Selection selection = _activeExplorer.Selection;
 
-            _ribbon.SetRibbonButtonStatus(enabled);
+            if (_ribbon != null)
+            {
+                if (selection != null && selection.Count == 1 && selection[1] is Outlook.MailItem)
+                {
+                    // one Mail object is selected
+                    Outlook.MailItem selectedMail = selection[1] as Outlook.MailItem; // (collection is 1-indexed)
+                                                                                      // tell the ribbon what our currently selected email is by setting this custom property, and run code against it
+                    _ribbon.CurrentEmail = selectedMail;
+                }
+                else
+                {
+                    _ribbon.CurrentEmail = null;
+                }
 
-            //{
-                System.Diagnostics.Debug.WriteLine(Globals.ThisAddIn.Application.ActiveExplorer().Selection.Count);
-            //}
-
+                _ribbon.SetRibbonButtonStatus(_ribbon.CurrentEmail != null);
+            }
         }
-
-        private void OOutlook_ItemLoad(object Item)
-        {
-            System.Diagnostics.Debug.WriteLine(Item);
-        }
-
-        //void Application_OptionsPagesAdd(Outlook.PropertyPages Pages)
-        //{
-        //    Pages.Add(new ConfigurationOptions(), "");
-        //}
-
 
         private void ThisAddIn_Shutdown(object sender, EventArgs e)
         {

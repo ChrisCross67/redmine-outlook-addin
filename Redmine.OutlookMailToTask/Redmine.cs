@@ -43,6 +43,8 @@ namespace Redmine.OutlookMailToTask
         private Net.Api.Types.User _currentRedmineUser;
         SelectProjectViewModel _selectProjectViewModel;
 
+        public Outlook.MailItem CurrentEmail { get; set; }
+
         public Redmine()
         {
             UpdateRedmineUser();
