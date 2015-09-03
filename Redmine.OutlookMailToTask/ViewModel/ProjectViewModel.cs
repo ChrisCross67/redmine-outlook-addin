@@ -19,6 +19,7 @@ namespace Redmine.OutlookMailToTask.ViewModel
 
         public ProjectViewModel()
         {
+            IssueCategories = new List<IssueCategoryViewModel>();
             CustomFields = new List<CustomFieldViewModel>();
             Trackers = new List<TrackerViewModel>();
             Children = new ObservableCollection<ProjectViewModel>();

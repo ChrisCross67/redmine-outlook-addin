@@ -71,77 +71,77 @@ namespace Redmine.OutlookMailToTask.ViewModel
         {
             var projectsList = new List<ProjectViewModel>();
 
+            IList<Net.Api.Types.Project> projects = null;
             try
             {
                 // connect to redmine
                 Net.Api.RedmineManager manager = new Net.Api.RedmineManager(Settings.Default.RedmineServer, Settings.Default.RedmineApi, Net.Api.MimeFormat.xml);
 
-                var projects = manager.GetObjectList<Net.Api.Types.Project>(new System.Collections.Specialized.NameValueCollection { { "limit", "100" }, { "include", "trackers,issue_categories" } });
-
-                if (projects != null)
-                {
-                    foreach (var project in projects)
-                    {
-                        ProjectViewModel projectViewModel = new ProjectViewModel();
-                        projectViewModel.Id = project.Id;
-                        projectViewModel.Name = project.Name;
-                        if (project.Parent != null)
-                        {
-                            projectViewModel.ParentId = project.Parent.Id;
-                        }
-
-                        if (project.CustomFields != null)
-                        {
-                            foreach (var customField in project.CustomFields)
-                            {
-                                CustomFieldViewModel customFieldViewModel = new CustomFieldViewModel();
-                                customFieldViewModel.Id = customField.Id;
-                                customFieldViewModel.Name = customField.Name;
-
-                                projectViewModel.CustomFields.Add(customFieldViewModel);
-                            }
-                        }
-
-                        if (project.Trackers != null)
-                        {
-                            foreach (var tracker in project.Trackers)
-                            {
-                                TrackerViewModel trackerViewModel = new TrackerViewModel();
-                                trackerViewModel.Id = tracker.Id;
-                                trackerViewModel.Name = tracker.Name;
-
-                                projectViewModel.Trackers.Add(trackerViewModel);
-
-                                // set first one as default
-                                if (projectViewModel.Tracker == null)
-                                {
-                                    projectViewModel.Tracker = trackerViewModel;
-                                }
-                            }
-                        }
-
-                        if (project.IssueCategories != null)
-                        {
-                            foreach (var issueCategory in project.IssueCategories)
-                            {
-                                IssueCategoryViewModel issueCategoryViewModel = new IssueCategoryViewModel();
-                                issueCategoryViewModel.Id = issueCategory.Id;
-                                issueCategoryViewModel.Name = issueCategory.Name;
-
-                                projectViewModel.IssueCategories.Add(issueCategoryViewModel);
-                            }
-                        }
-
-                        projectsList.Add(projectViewModel);
-                    }
-
-                    return projectsList;
-                }
-
+                projects = manager.GetObjectList<Net.Api.Types.Project>(new System.Collections.Specialized.NameValueCollection { { "limit", "100" }, { "include", "trackers,issue_categories" } });
             }
             catch { }
 
-            return null;
+            if (projects == null)
+            {
+                return null;
+            }
+
+            foreach (var project in projects)
+            {
+                ProjectViewModel projectViewModel = new ProjectViewModel();
+                projectViewModel.Id = project.Id;
+                projectViewModel.Name = project.Name;
+                if (project.Parent != null)
+                {
+                    projectViewModel.ParentId = project.Parent.Id;
+                }
+
+                if (project.CustomFields != null)
+                {
+                    foreach (var customField in project.CustomFields)
+                    {
+                        CustomFieldViewModel customFieldViewModel = new CustomFieldViewModel();
+                        customFieldViewModel.Id = customField.Id;
+                        customFieldViewModel.Name = customField.Name;
+
+                        projectViewModel.CustomFields.Add(customFieldViewModel);
+                    }
+                }
+
+                if (project.Trackers != null)
+                {
+                    foreach (var tracker in project.Trackers)
+                    {
+                        TrackerViewModel trackerViewModel = new TrackerViewModel();
+                        trackerViewModel.Id = tracker.Id;
+                        trackerViewModel.Name = tracker.Name;
+
+                        projectViewModel.Trackers.Add(trackerViewModel);
+
+                        // set first one as default
+                        if (projectViewModel.Tracker == null)
+                        {
+                            projectViewModel.Tracker = trackerViewModel;
+                        }
+                    }
+                }
+
+                if (project.IssueCategories != null)
+                {
+                    foreach (var issueCategory in project.IssueCategories)
+                    {
+                        IssueCategoryViewModel issueCategoryViewModel = new IssueCategoryViewModel();
+                        issueCategoryViewModel.Id = issueCategory.Id;
+                        issueCategoryViewModel.Name = issueCategory.Name;
+
+                        projectViewModel.IssueCategories.Add(issueCategoryViewModel);
+                    }
+                }
+
+                projectsList.Add(projectViewModel);
+            }
+
+            return projectsList;
         }
 
         private ObservableCollection<ProjectViewModel> FlattenProjects(IList<ProjectViewModel> projects)
