@@ -34,9 +34,6 @@
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
-
-
         </StackPanel>
     </DockPanel>
-
 </Window>

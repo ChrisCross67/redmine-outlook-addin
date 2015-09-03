@@ -52,109 +52,129 @@ namespace Redmine.OutlookMailToTask
 
         public void OnMyButtonClick(Office.IRibbonControl control)
         {
-            if (control.Context is Outlook.Selection)
+            Outlook.MailItem mail = null;
+            bool isOwnerSet = false;
+
+            if (control.Context is Outlook.Selection) // right click on e-mail context menu
             {
                 Outlook.Selection sel = control.Context as Outlook.Selection;
-                Outlook.MailItem mail = (Outlook.MailItem)sel[1];
-                //MessageBox.Show(mail.Subject.ToString());
+                mail = (Outlook.MailItem)sel[1];
+            }
+            else // selection from explorer via button in ribbon
+            {
+                Outlook.Selection selection = Globals.ThisAddIn.Application.ActiveExplorer().Selection;
+                mail = (Outlook.MailItem)selection[1];
+            }
 
-                // if no settings is saved prompt user to fill it
-                if (string.IsNullOrEmpty(_userName))
+            if (mail == null)
+            {
+                return;
+            }
+
+            //MessageBox.Show(mail.Subject.ToString());
+
+            // if no settings is saved prompt user to fill it
+            if (string.IsNullOrEmpty(_userName))
+            {
+                DoShowSettings();
+            }
+
+            // if still no password, skip it...
+            if (string.IsNullOrEmpty(_userName))
+            {
+                return;
+            }
+
+            // Ask for project
+            SelectProjectWindow projectWindow = new SelectProjectWindow();
+            projectWindow.DataContext = _selectProjectViewModel;
+            _selectProjectViewModel.SetSelectedProject(Settings.Default.LastUsedProjectId);
+
+            // use WindowInteropHelper to set the Owner of our WPF window to the Outlook application window
+            System.Windows.Interop.WindowInteropHelper hwndHelper = new System.Windows.Interop.WindowInteropHelper(projectWindow);
+
+            hwndHelper.Owner = System.Diagnostics.Process.GetCurrentProcess().MainWindowHandle; // new IntPtr(Globals.ThisAddIn.Application.ActiveWindow().WindowHandle32);
+
+            // show our window
+            bool? result = projectWindow.ShowDialog();
+            if ((result.HasValue && result.Value == false) || _selectProjectViewModel.SelectedProject == null)
+            {
+                // Cancel task
+                return;
+            }
+
+            // Save last used project id
+            Settings.Default.LastUsedProjectId = _selectProjectViewModel.SelectedProject.Id;
+            Settings.Default.Save();
+
+            Net.Api.RedmineManager manager = new Net.Api.RedmineManager(Settings.Default.RedmineServer, Settings.Default.RedmineApi, Net.Api.MimeFormat.xml);
+
+            Net.Api.Types.Issue issue = new Net.Api.Types.Issue();
+            issue.Subject = mail.Subject;
+            if (mail.BodyFormat == Outlook.OlBodyFormat.olFormatHTML)
+            {
+                issue.Description = mail.HTMLBody;
+            }
+            else
+            {
+                issue.Description = mail.Body;
+            }
+
+            issue.Project = new Net.Api.Types.Project() { Id = _selectProjectViewModel.SelectedProject.Id };
+
+            try
+            {
+                var users = manager.GetObjectList<Net.Api.Types.User>(new NameValueCollection { { "name", GetSenderSMTPAddress(mail) } });
+                if (users.Count == 1)
                 {
-                    DoShowSettings();
+                    issue.Author = new Net.Api.Types.IdentifiableName() { Id = users.FirstOrDefault().Id };
+
+                    isOwnerSet = true;
                 }
+            }
+            catch { }
 
-                // if still no password, skip it...
-                if (string.IsNullOrEmpty(_userName))
+            issue.AssignedTo = new Net.Api.Types.IdentifiableName() { Id = _currentRedmineUser.Id };
+
+            List<Net.Api.Types.Upload> attachments = new List<Net.Api.Types.Upload>();
+
+            if (mail.Attachments.Count > 0)
+            {
+                foreach (Outlook.Attachment att in mail.Attachments)
                 {
-                    return;
-                }
-
-                // Ask for project
-                SelectProjectWindow projectWindow = new SelectProjectWindow();
-                projectWindow.DataContext = _selectProjectViewModel;
-                _selectProjectViewModel.SetSelectedProject(Settings.Default.LastUsedProjectId);
-
-                // use WindowInteropHelper to set the Owner of our WPF window to the Outlook application window
-                System.Windows.Interop.WindowInteropHelper hwndHelper = new System.Windows.Interop.WindowInteropHelper(projectWindow);
-
-                hwndHelper.Owner = System.Diagnostics.Process.GetCurrentProcess().MainWindowHandle; // new IntPtr(Globals.ThisAddIn.Application.ActiveWindow().WindowHandle32);
-
-                // show our window
-                bool? result = projectWindow.ShowDialog();
-                if ((result.HasValue && result.Value == false) || _selectProjectViewModel.SelectedProject == null)
-                {
-                    // Cancel task
-                    return;
-                }
-
-                // Save last used project id
-                Settings.Default.LastUsedProjectId = _selectProjectViewModel.SelectedProject.Id;
-                Settings.Default.Save();
-
-                //if (string.IsNullOrEmpty(_userName) == false)
-                //{
-                Net.Api.RedmineManager manager = new Net.Api.RedmineManager(Settings.Default.RedmineServer, Settings.Default.RedmineApi, Net.Api.MimeFormat.xml);
-
-                Net.Api.Types.Issue issue = new Net.Api.Types.Issue();
-                issue.Subject = mail.Subject;
-                if (mail.BodyFormat == Outlook.OlBodyFormat.olFormatHTML)
-                {
-                    issue.Description = mail.HTMLBody;
-                }
-                else
-                {
-                    issue.Description = mail.Body;
-                }
-
-                issue.Project = new Net.Api.Types.Project() { Id = _selectProjectViewModel.SelectedProject.Id };
-
-                //var users = manager.GetObjectList<Net.Api.Types.User>(new NameValueCollection { { "name", GetSenderSMTPAddress(mail) } });
-                //if (users.Count == 1)
-                //{
-                //issue.Author = new Net.Api.Types.IdentifiableName() { Id = users.FirstOrDefault().Id };
-                issue.AssignedTo = new Net.Api.Types.IdentifiableName() { Id = _currentRedmineUser.Id };
-                //}
-
-                List<Net.Api.Types.Upload> attachments = new List<Net.Api.Types.Upload>();
-
-                if (mail.Attachments.Count > 0)
-                {
-                    foreach (Outlook.Attachment att in mail.Attachments)
+                    try
                     {
-                        //MessageBox.Show(att.FileName);
+                        string tempFile = Path.GetTempFileName();
+                        att.SaveAsFile(tempFile);
+                        var upload = manager.UploadFile(File.ReadAllBytes(tempFile));
+                        upload.FileName = att.FileName;
+                        upload.Description = att.DisplayName;
+                        upload.ContentType = System.Web.MimeMapping.GetMimeMapping(att.FileName);
 
-                        try
-                        {
-                            string tempFile = Path.GetTempFileName();
-                            att.SaveAsFile(tempFile);
-                            var upload = manager.UploadFile(File.ReadAllBytes(tempFile));
-                            upload.FileName = att.FileName;
-                            upload.Description = att.DisplayName;
-                            upload.ContentType = System.Web.MimeMapping.GetMimeMapping(att.FileName);
-
-                            attachments.Add(upload);
-                        }
-                        catch (Exception e)
-                        {
-                            MessageBox.Show(string.Format("Cannot upload attachment {0}. Error: {1}", att.FileName, e.Message));
-                        }
+                        attachments.Add(upload);
+                    }
+                    catch (Exception e)
+                    {
+                        MessageBox.Show(string.Format("Cannot upload attachment {0}. Error: {1}", att.FileName, e.Message));
                     }
                 }
+            }
 
-                Net.Api.Types.Issue createdIssue = null;
-                try
-                {
-                    issue.Uploads = attachments;
-                    createdIssue = manager.CreateObject(issue);
-                }
-                catch
-                {
-                    MessageBox.Show("Creation of the task failed.");
-                    return;
-                }
+            Net.Api.Types.Issue createdIssue = null;
+            try
+            {
+                issue.Uploads = attachments;
+                createdIssue = manager.CreateObject(issue);
+            }
+            catch
+            {
+                MessageBox.Show("Creation of the task failed.");
+                return;
+            }
 
-                // also try to add custom field
+            // also if setting the owner failed (no admin rights) try to note owner at least to the custom field if is assigned to the project
+            if (isOwnerSet == false)
+            {
                 try
                 {
                     var list = new List<Net.Api.Types.IssueCustomField>();
@@ -172,16 +192,17 @@ namespace Redmine.OutlookMailToTask
                     manager.UpdateObject(createdIssue.Id.ToString(), createdIssue);
                 }
                 catch { }
-
-                if (Settings.Default.OpenTaskWhenCreated)
-                {
-                    System.Diagnostics.Process.Start(string.Format("{0}/issues/{1}", Settings.Default.RedmineServer, createdIssue.Id));
-                }
-                else
-                {
-                    MessageBox.Show(string.Format("Task has been created in Redmine with ID #{0}.", createdIssue.Id));
-                }
             }
+
+            if (Settings.Default.OpenTaskWhenCreated)
+            {
+                System.Diagnostics.Process.Start(string.Format("{0}/issues/{1}", Settings.Default.RedmineServer, createdIssue.Id));
+            }
+            else
+            {
+                MessageBox.Show(string.Format("Task has been created in Redmine with ID #{0}.", createdIssue.Id));
+            }
+
         }
 
         private string GetSenderSMTPAddress(Outlook.MailItem mail)
