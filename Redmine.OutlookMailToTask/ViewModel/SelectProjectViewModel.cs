@@ -61,7 +61,10 @@ namespace Redmine.OutlookMailToTask.ViewModel
 
         public void SetSelectedProject(int projectId)
         {
-            SelectedProject = _flatProjects.Where(p => p.Id == projectId).FirstOrDefault();
+            if (_flatProjects != null)
+            {
+                SelectedProject = _flatProjects.Where(p => p.Id == projectId).FirstOrDefault();
+            }
         }
 
         private List<ProjectViewModel> LoadProjectsFromRedmine()
