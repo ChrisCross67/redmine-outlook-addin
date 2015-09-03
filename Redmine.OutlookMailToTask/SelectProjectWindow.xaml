@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Redmine.OutlookMailToTask"
         xmlns:ViewModel="clr-namespace:Redmine.OutlookMailToTask.ViewModel"
+        xmlns:Converter="clr-namespace:Redmine.OutlookMailToTask.Converters"
              mc:Ignorable="d" 
         Title="Choose Redmine project..."
         Height="220" Width="300" 
@@ -14,6 +15,10 @@
         <ViewModel:SelectProjectViewModel />
     </Window.DataContext>
 
+    <Window.Resources>
+        <Converter:CountToVisibilityConverter x:Key="CountToVisibilityConverter" />
+    </Window.Resources>
+    
     <DockPanel>
         <Grid DockPanel.Dock="Bottom" Background="LightGray">
             <StackPanel Orientation="Horizontal"  HorizontalAlignment="Right" VerticalAlignment="Bottom">
@@ -23,13 +28,29 @@
 
         </Grid>
         <StackPanel Margin="3">
-            <TextBlock Margin="3,3,3,0">Redmine project:</TextBlock>
+            <TextBlock Margin="3,3,3,0">Project:</TextBlock>
             <ComboBox ItemsSource="{Binding FlatProjects}" SelectedItem="{Binding SelectedProject}" Margin="3">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
                             <!-- Margin="{Binding Level, Converter={StaticResource LevelToMarginConverter}}" -->
                             <TextBlock Text="{Binding Path}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <TextBlock Margin="3,3,3,0" 
+                       Visibility="{Binding SelectedProject.Trackers, Converter={StaticResource CountToVisibilityConverter}}"
+                       Text="Tracker:" />
+            <ComboBox ItemsSource="{Binding SelectedProject.Trackers}" 
+                      SelectedItem="{Binding SelectedProject.Tracker}" 
+                      Visibility="{Binding SelectedProject.Trackers, Converter={StaticResource CountToVisibilityConverter}}"
+                      Margin="3">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding Name}"/>
                         </StackPanel>
                     </DataTemplate>
                 </ComboBox.ItemTemplate>

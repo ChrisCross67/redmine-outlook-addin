@@ -29,6 +29,8 @@ namespace Redmine.OutlookMailToTask.ViewModel
             get; set;
         }
 
+        public TrackerViewModel Tracker { get; set; } 
+
         public List<TrackerViewModel> Trackers
         {
             get; set;

@@ -195,6 +195,7 @@
     <Compile Include="ConfigurationOptions.Designer.cs">
       <DependentUpon>ConfigurationOptions.cs</DependentUpon>
     </Compile>
+    <Compile Include="Converters\CountToVisibilityConverter.cs" />
     <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="Mvvm.cs" />
     <Compile Include="OptionsWindow.xaml.cs">

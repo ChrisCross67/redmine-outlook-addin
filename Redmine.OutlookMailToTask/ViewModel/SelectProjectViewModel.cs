@@ -111,6 +111,12 @@ namespace Redmine.OutlookMailToTask.ViewModel
                                 trackerViewModel.Name = tracker.Name;
 
                                 projectViewModel.Trackers.Add(trackerViewModel);
+
+                                // set first one as default
+                                if (projectViewModel.Tracker == null)
+                                {
+                                    projectViewModel.Tracker = trackerViewModel;
+                                }
                             }
                         }
 
