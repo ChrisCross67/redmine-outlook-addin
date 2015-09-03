@@ -45,6 +45,11 @@ namespace Redmine.OutlookMailToTask.ViewModel
 
         public SelectProjectViewModel()
         {
+            ReloadProjectsList();
+        }
+
+        public void ReloadProjectsList()
+        {
             Task.Factory.StartNew(() => LoadProjectsFromRedmine()).ContinueWith((t) =>
             {
                 if (t.Result != null)

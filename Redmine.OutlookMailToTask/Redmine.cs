@@ -71,8 +71,6 @@ namespace Redmine.OutlookMailToTask
                 return;
             }
 
-            //MessageBox.Show(mail.Subject.ToString());
-
             // if no settings is saved prompt user to fill it
             if (string.IsNullOrEmpty(_userName))
             {
@@ -350,6 +348,8 @@ namespace Redmine.OutlookMailToTask
 
                     _userName = string.Format("{0} {1}", user.FirstName, user.LastName);
                     _currentRedmineUser = user;
+
+                    _selectProjectViewModel.ReloadProjectsList();
 
                     InvalidateRibbon();
                 }
