@@ -39,10 +39,10 @@
     <UpdateEnabled>true</UpdateEnabled>
     <UpdateInterval>7</UpdateInterval>
     <UpdateIntervalUnits>days</UpdateIntervalUnits>
-    <ProductName>E-mail to Redmine Task</ProductName>
+    <ProductName>Redmine for Outlook Add-In</ProductName>
     <PublisherName>Vladimír Mach</PublisherName>
-    <SupportUrl />
-    <FriendlyName>E-mail to Redmine Task</FriendlyName>
+    <SupportUrl>https://github.com/machv/redmine-outlook-issue-addin</SupportUrl>
+    <FriendlyName>Redmine for Outlook Add-In</FriendlyName>
     <OfficeApplicationDescription>Converts recieved e-mail to Redmine task.</OfficeApplicationDescription>
     <LoadBehavior>3</LoadBehavior>
   </PropertyGroup>
