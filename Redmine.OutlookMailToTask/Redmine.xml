@@ -70,7 +70,7 @@
   </backstage>
   <contextMenus>
     <contextMenu idMso="ContextMenuMailItem">
-      <button id="SynchronizeMailItem" onAction="OnMyButtonClick" getImage="GetIcon" getLabel="GetConvertToRedmineLabel"/>
+      <button id="SynchronizeMailItem" onAction="OnConvertEmailButtonClick" getImage="GetIcon" getLabel="GetConvertToRedmineLabel"/>
     </contextMenu>
   </contextMenus>
 </customUI>
