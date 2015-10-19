@@ -1,4 +1,5 @@
-﻿using Redmine.OutlookMailToTask.Properties;
+﻿using Redmine.Net.Api;
+using Redmine.OutlookMailToTask.Properties;
 using Redmine.OutlookMailToTask.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Office = Microsoft.Office.Core;
 using Outlook = Microsoft.Office.Interop.Outlook;
@@ -42,6 +44,7 @@ namespace Redmine.OutlookMailToTask
         private string _userName = string.Empty;
         private Net.Api.Types.User _currentRedmineUser;
         SelectProjectViewModel _selectProjectViewModel;
+        private bool _isEasyContactApiAvailable = false;
 
         public Outlook.MailItem CurrentEmail { get; set; }
 
@@ -72,7 +75,7 @@ namespace Redmine.OutlookMailToTask
             }
             else // selection from explorer via button in ribbon
             {
-                Outlook.Selection selection = Globals.ThisAddIn.Application.ActiveExplorer().Selection;
+                Outlook.Selection selection = Globals.RedmineAddIn.Application.ActiveExplorer().Selection;
                 mail = (Outlook.MailItem)selection[1];
             }
 
@@ -295,6 +298,11 @@ namespace Redmine.OutlookMailToTask
             return _isRibbonButtonEnabled;
         }
 
+        public bool GetCrmButtonVisibility(Office.IRibbonControl control)
+        {
+            return _isEasyContactApiAvailable;
+        }
+
         public void SetRibbonButtonStatus(bool enabled)
         {
             _isRibbonButtonEnabled = enabled;
@@ -357,19 +365,40 @@ namespace Redmine.OutlookMailToTask
             DoShowSettings();
         }
 
-        private void UpdateRedmineUser()
+        private Net.Api.RedmineManager GetRedmineManager()
+        {
+            if (string.IsNullOrEmpty(Settings.Default.RedmineServer))
+                return null;
+
+            Net.Api.RedmineManager manager = new Net.Api.RedmineManager(Settings.Default.RedmineServer, Settings.Default.RedmineApi, Net.Api.MimeFormat.xml);
+
+            return manager;
+        }
+
+        private void DoUpdateRedmineUser()
         {
             try
             {
                 if (string.IsNullOrEmpty(Settings.Default.RedmineServer) == false && string.IsNullOrEmpty(Settings.Default.RedmineApi) == false)
                 {
-                    Net.Api.RedmineManager manager = new Net.Api.RedmineManager(Settings.Default.RedmineServer, Settings.Default.RedmineApi, Net.Api.MimeFormat.xml);
+                    Net.Api.RedmineManager manager = GetRedmineManager();
                     var user = manager.GetCurrentUser();
 
                     _userName = string.Format("{0} {1}", user.FirstName, user.LastName);
                     _currentRedmineUser = user;
 
                     _selectProjectViewModel.ReloadProjectsList();
+
+                    // now check if we have EasyRedmine extended API
+                    try
+                    {
+                        var contacts = manager.GetObjectList<Net.Api.Types.Contact>(new NameValueCollection() { });
+                        _isEasyContactApiAvailable = true;
+                    }
+                    catch (RedmineException e)
+                    {
+                        _isEasyContactApiAvailable = false;
+                    }
 
                     InvalidateRibbon();
                 }
@@ -384,14 +413,17 @@ namespace Redmine.OutlookMailToTask
             }
         }
 
+        private void UpdateRedmineUser()
+        {
+            Task.Factory.StartNew(() =>
+            {
+                DoUpdateRedmineUser();
+            });
+        }
+
         public Image GetIcon(Office.IRibbonControl control)
         {
             return Resources.RedmineLogo;
-        }
-
-        public string GetConvertToRedmineLabel(Office.IRibbonControl control)
-        {
-            return "Convert to Redmine task";
         }
 
         #region IRibbonExtensibility Members

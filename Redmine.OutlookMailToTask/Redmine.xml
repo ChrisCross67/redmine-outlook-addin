@@ -4,7 +4,7 @@
     <tabs>
       <tab idMso="TabMail">
         <group id="redmineGroup" insertAfterMso="GroupMailRespond" label="Redmine">
-          <button id="myButton"
+          <button id="convertEmailTabMailButton"
                   size="large"
                   getImage="GetIcon"
                   getEnabled="RibbonRedmineButtonEnabled"
@@ -13,12 +13,21 @@
                   screentip="Convert as Redmine task."
                   supertip="Converts e-mail message as new task in Redmine."
               />
+          <button id="addCrmNoteTabMailButton"
+                  size="normal"
+                  getImage="getIcon"
+                  getEnabled="RibbonRedmineButtonEnabled"
+                  getVisible="GetCrmButtonVisibility"
+                  label="CRM note"
+                  screentip="Add e-mail as note to CRM contact."
+                  supertip="Adds current e-mail message as new note to existing CRM contact."
+                  />
         </group>
       </tab>
 
       <tab idMso="TabReadMessage">
         <group id="redmineReadGroup" insertAfterMso="GroupRespond" label="Redmine">
-          <button id="convertEmailButton"
+          <button id="convertEmailTabReadButton"
                   size="large"
                   getImage="GetIcon"
                   label="Convert to task"
@@ -26,40 +35,66 @@
                   screentip="Convert as Redmine task."
                   supertip="Converts e-mail message as new task in Redmine."
               />
+              <button id="addCrmNoteTabReadButton"
+                  size="normal"
+                  getImage="getIcon"
+                  getEnabled="RibbonRedmineButtonEnabled"
+                  getVisible="GetCrmButtonVisibility"
+                  label="To CRM note"
+                  screentip="Add e-mail as note to CRM contact."
+                  supertip="Adds current e-mail message as new note to existing CRM contact."
+                  />
         </group>
       </tab>
     </tabs>
   </ribbon>
   <backstage onShow="OnShow">
 
-    <tab idMso="TabInfo">
-      <firstColumn>
-        <group id="TestGrp" label="Custom functionality"  insertBeforeMso="GroupPermissions" helperText="This group contains the custom functionality.">
-          <primaryItem>
-            <button id="MyCustomButton" label="My Button" />
-          </primaryItem>
-        </group>
-      </firstColumn>
-    </tab>
-
-    <tab id="redmineTab" insertAfterMso="TabInfo" label="Redmine" title="Redmine server" >
+    <tab idMso="TabAccounts">
       <firstColumn>
         <group id="regularGroup"
+               insertAfterMso="GroupOutOfOffice"
+              label="Redmine Account"
+              helperText="Manage your Redmine account."
+              getStyle="GetWorkStatusStyle">
+          <primaryItem>
+            <button id="RedmineSettingsButtonBig"
+                    label="Manage Redmine"
+                    getImage="GetIcon"
+                    isDefinitive="false"
+                    onAction="showSettings"
+                    screentip="Configure integration with the Redmine server."/>
+          </primaryItem>
+          <topItems>
+            <layoutContainer id="layoutOne" layoutChildren="vertical">
+              <labelControl id="labelUserName" getLabel="labelUserNameValue" getVisible="labelUserNameEnabled"/>
+              <hyperlink id="sampleHyper" label="Sign out" onAction="LogUserOut" getVisible="labelUserNameEnabled" />
+            </layoutContainer>
+          </topItems>
+        </group>
+
+      </firstColumn>
+    </tab>
+    <!-- TabAccounts -->
+    <!--
+    <tab id="redmineTab" insertAfterMso="TabHelp" label="Redmine" title="Redmine Account">
+      <firstColumn>
+        <group id="regularGroup1"
               label="Redmine configuration"
               helperText="You can configure your Redmine server."
               getStyle="GetWorkStatusStyle">
           <primaryItem>
-            <button id="RedmineSettingsButtonBig"
+            <button id="RedmineSettingsButtonBig1"
                     label="Configure Redmine"
                     getImage="GetIcon"
                     isDefinitive="false"
                     onAction="showSettings"
-                    screentip="Configure integration to the Redmine server."/>
+                    screentip="Configure integration with the Redmine server."/>
           </primaryItem>
           <topItems>
-            <layoutContainer id="layoutOne" layoutChildren="vertical">
-              <labelControl id="labelUserName" getLabel="labelUserNameValue" getEnabled="labelUserNameEnabled"/>
-              <button id="sampleButton" label="Logout" isDefinitive="true" onAction="LogUserOut" getEnabled="labelUserNameEnabled" imageMso="FileDocumentInspect" />
+            <layoutContainer id="layoutOne1" layoutChildren="vertical">
+              <labelControl id="labelUserName1" getLabel="labelUserNameValue" getEnabled="labelUserNameEnabled"/>
+              <button id="sampleButton1" label="Logout" isDefinitive="true" onAction="LogUserOut" getEnabled="labelUserNameEnabled" imageMso="FileDocumentInspect" />
             </layoutContainer>
           </topItems>
         </group>
@@ -67,10 +102,21 @@
       </firstColumn>
 
     </tab>
+    -->
   </backstage>
   <contextMenus>
     <contextMenu idMso="ContextMenuMailItem">
-      <button id="SynchronizeMailItem" onAction="OnConvertEmailButtonClick" getImage="GetIcon" getLabel="GetConvertToRedmineLabel"/>
+      <button id="convertEmailContextButton" 
+              onAction="OnConvertEmailButtonClick" 
+              getImage="GetIcon" 
+              label="Convert to Redmine task" />
+    
+      <button id="addCrmNoteContextButton" 
+              getVisible="GetCrmButtonVisibility"
+              onAction="OnConvertEmailButtonClick" 
+              getImage="GetIcon" 
+              label="Append to Redmine CRM contact" />
+    
     </contextMenu>
   </contextMenus>
 </customUI>

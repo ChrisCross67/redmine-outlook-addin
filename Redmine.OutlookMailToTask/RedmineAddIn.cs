@@ -4,7 +4,7 @@ using Office = Microsoft.Office.Core;
 
 namespace Redmine.OutlookMailToTask
 {
-    public partial class ThisAddIn
+    public partial class RedmineAddIn
     {
         Redmine _ribbon;
 
