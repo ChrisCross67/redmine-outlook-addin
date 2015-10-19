@@ -55,13 +55,9 @@ namespace Redmine.OutlookMailToTask
             UpdateRedmineUser();
         }
 
-        /// <summary>
-        /// Fired when user clicks on convert button
-        /// </summary>
-        public void OnConvertEmailButtonClick(Office.IRibbonControl control)
+        private Outlook.MailItem GetSelectedMail(Office.IRibbonControl control)
         {
             Outlook.MailItem mail = null;
-            bool isOwnerSet = false;
 
             if (control.Context is Outlook.Inspector) // opened message window
             {
@@ -79,6 +75,42 @@ namespace Redmine.OutlookMailToTask
                 mail = (Outlook.MailItem)selection[1];
             }
 
+            return mail;
+        }
+
+        public void OnAppendCrmContactNoteClick(Office.IRibbonControl control)
+        {
+            Outlook.MailItem mail = GetSelectedMail(control);
+            if (mail == null)
+            {
+                return;
+            }
+
+            NewCrmNoteWindow window = new NewCrmNoteWindow();
+
+            // use WindowInteropHelper to set the Owner of our WPF window to the Visio application window
+            System.Windows.Interop.WindowInteropHelper hwndHelper = new System.Windows.Interop.WindowInteropHelper(window);
+
+            hwndHelper.Owner = System.Diagnostics.Process.GetCurrentProcess().MainWindowHandle; // new IntPtr(Globals.ThisAddIn.Application.ActiveWindow().WindowHandle32);
+
+            // show our window
+            window.ShowDialog();
+
+            // if OK was selected then do work
+            if (window.DialogResult.HasValue && window.DialogResult.Value)
+            {
+
+            }
+        }
+
+        /// <summary>
+        /// Fired when user clicks on convert button
+        /// </summary>
+        public void OnConvertEmailButtonClick(Office.IRibbonControl control)
+        {
+            bool isOwnerSet = false;
+
+            Outlook.MailItem mail = GetSelectedMail(control);
             if (mail == null)
             {
                 return;

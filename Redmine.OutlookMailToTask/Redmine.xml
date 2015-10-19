@@ -18,6 +18,7 @@
                   getImage="getIcon"
                   getEnabled="RibbonRedmineButtonEnabled"
                   getVisible="GetCrmButtonVisibility"
+                  onAction="OnAppendCrmContactNoteClick"
                   label="CRM note"
                   screentip="Add e-mail as note to CRM contact."
                   supertip="Adds current e-mail message as new note to existing CRM contact."
@@ -40,6 +41,7 @@
                   getImage="getIcon"
                   getEnabled="RibbonRedmineButtonEnabled"
                   getVisible="GetCrmButtonVisibility"
+                      onAction="OnAppendCrmContactNoteClick"
                   label="To CRM note"
                   screentip="Add e-mail as note to CRM contact."
                   supertip="Adds current e-mail message as new note to existing CRM contact."
@@ -113,7 +115,7 @@
     
       <button id="addCrmNoteContextButton" 
               getVisible="GetCrmButtonVisibility"
-              onAction="OnConvertEmailButtonClick" 
+              onAction="OnAppendCrmContactNoteClick"
               getImage="GetIcon" 
               label="Append to Redmine CRM contact" />
     
