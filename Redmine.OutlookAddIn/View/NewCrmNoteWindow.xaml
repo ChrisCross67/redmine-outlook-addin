@@ -10,7 +10,17 @@
     <Window.DataContext>
         <ViewModel:NewCrmNoteViewModel />
     </Window.DataContext>
-    <Grid>
-            
-    </Grid>
+    <DockPanel>
+        <Grid DockPanel.Dock="Bottom" Background="LightGray">
+            <StackPanel Orientation="Horizontal"  HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                <Button Height="23" Margin="12,12,12,12" Width="75" IsCancel="True">Cancel</Button>
+                <Button Height="23" Margin="12,12,12,12" Name="buttonClose" Width="75" FontWeight="Bold" IsDefault="True">_Add note</Button>
+            </StackPanel>
+
+        </Grid>
+        <StackPanel Margin="3">
+            <TextBlock Margin="3,3,3,0">Contact</TextBlock>
+            <ListBox ItemsSource="{Binding Contacts}"></ListBox>
+        </StackPanel>
+    </DockPanel>
 </Window>

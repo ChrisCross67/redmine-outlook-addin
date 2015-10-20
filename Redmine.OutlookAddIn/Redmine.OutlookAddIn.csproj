@@ -203,6 +203,8 @@
     <Compile Include="Converters\CountToVisibilityConverter.cs" />
     <Compile Include="Logic\EnumerableExtensions.cs" />
     <Compile Include="Logic\RedmineManagerExtensions.cs" />
+    <Compile Include="ViewModel\ContactTypeViewModel.cs" />
+    <Compile Include="ViewModel\ContactViewModel.cs" />
     <Compile Include="ViewModel\NewCrmNoteViewModel.cs" />
     <Compile Include="View\NewCrmNoteWindow.xaml.cs">
       <DependentUpon>NewCrmNoteWindow.xaml</DependentUpon>
