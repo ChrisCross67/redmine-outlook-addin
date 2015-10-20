@@ -201,8 +201,8 @@
       <DependentUpon>ConfigurationOptions.cs</DependentUpon>
     </Compile>
     <Compile Include="Converters\CountToVisibilityConverter.cs" />
-    <Compile Include="EnumerableExtensions.cs" />
-    <Compile Include="Logic\RedmineHelpers.cs" />
+    <Compile Include="Logic\EnumerableExtensions.cs" />
+    <Compile Include="Logic\RedmineManagerExtensions.cs" />
     <Compile Include="View\NewCrmNoteWindow.xaml.cs">
       <DependentUpon>NewCrmNoteWindow.xaml</DependentUpon>
     </Compile>
@@ -278,9 +278,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Mach.Wpf.Mvvm.xml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\redmine-net-api\redmine-net45-api\redmine-net45-api.csproj">
