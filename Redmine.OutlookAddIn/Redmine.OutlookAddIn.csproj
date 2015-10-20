@@ -280,13 +280,13 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\redmine-net-api\redmine-net40-api\redmine-net40-api.csproj">
-      <Project>{0d9b763c-a16b-463b-bddd-0a0467dcd32e}</Project>
-      <Name>redmine-net40-api</Name>
-    </ProjectReference>
+    <Content Include="Mach.Wpf.Mvvm.xml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Mach.Wpf.Mvvm.xml" />
+    <ProjectReference Include="..\..\redmine-net-api\redmine-net45-api\redmine-net45-api.csproj">
+      <Project>{89433e6e-f3d4-4b66-ac9a-1b7f4345bba4}</Project>
+      <Name>redmine-net45-api</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
