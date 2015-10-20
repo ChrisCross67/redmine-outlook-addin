@@ -2,7 +2,7 @@
 using Outlook = Microsoft.Office.Interop.Outlook;
 using Office = Microsoft.Office.Core;
 
-namespace Redmine.OutlookMailToTask
+namespace Redmine.OutlookAddIn
 {
     public partial class RedmineAddIn
     {

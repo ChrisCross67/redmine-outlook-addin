@@ -1,6 +1,6 @@
 ﻿using Redmine.Net.Api;
-using Redmine.OutlookMailToTask.Properties;
-using Redmine.OutlookMailToTask.ViewModel;
+using Redmine.OutlookAddIn.Properties;
+using Redmine.OutlookAddIn.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -34,7 +34,7 @@ using Outlook = Microsoft.Office.Interop.Outlook;
 // For more information, see the Ribbon XML documentation in the Visual Studio Tools for Office Help.
 
 
-namespace Redmine.OutlookMailToTask
+namespace Redmine.OutlookAddIn
 {
     [ComVisible(true)]
     public class Redmine : Office.IRibbonExtensibility
@@ -462,7 +462,7 @@ namespace Redmine.OutlookMailToTask
 
         public string GetCustomUI(string ribbonID)
         {
-            return GetResourceText("Redmine.OutlookMailToTask.Redmine.xml");
+            return GetResourceText("Redmine.OutlookAddIn.Redmine.xml");
         }
 
         #endregion

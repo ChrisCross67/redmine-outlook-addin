@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace Redmine.OutlookMailToTask.ViewModel
+namespace Redmine.OutlookAddIn.ViewModel
 {
     public class ProjectViewModel
     {

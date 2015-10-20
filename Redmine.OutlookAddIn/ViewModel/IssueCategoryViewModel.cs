@@ -1,6 +1,6 @@
 ﻿using Mach.Wpf.Mvvm;
 
-namespace Redmine.OutlookMailToTask.ViewModel
+namespace Redmine.OutlookAddIn.ViewModel
 {
     public class IssueCategoryViewModel : NotifyPropertyBase
     {

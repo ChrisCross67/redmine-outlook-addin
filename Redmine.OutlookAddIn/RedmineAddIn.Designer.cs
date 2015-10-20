@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 
 #pragma warning disable 414
-namespace Redmine.OutlookMailToTask {
+namespace Redmine.OutlookAddIn {
     
     
     /// 

@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Redmine.OutlookMailToTask
+namespace Redmine.OutlookAddIn
 {
     /// <summary>
     /// Interaction logic for NewCrmNoteWindow.xaml

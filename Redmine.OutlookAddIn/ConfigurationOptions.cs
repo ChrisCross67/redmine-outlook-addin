@@ -10,7 +10,7 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using Outlook = Microsoft.Office.Interop.Outlook;
 
-namespace Redmine.OutlookMailToTask
+namespace Redmine.OutlookAddIn
 {
     [ComVisible(true)]
     public partial class ConfigurationOptions : UserControl, Outlook.PropertyPage

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Redmine.OutlookMailToTask.Properties {
+namespace Redmine.OutlookAddIn.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

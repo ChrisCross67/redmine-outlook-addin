@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace Redmine.OutlookMailToTask.Converters
+namespace Redmine.OutlookAddIn.Converters
 {
     public class CountToVisibilityConverter : IValueConverter
     {

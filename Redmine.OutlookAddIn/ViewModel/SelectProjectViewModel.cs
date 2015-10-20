@@ -3,10 +3,11 @@ using System.Collections.ObjectModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Redmine.OutlookMailToTask.Properties;
+using Redmine.OutlookAddIn.Properties;
 using System.Threading.Tasks;
+using Redmine.OutlookAddIn.Extensions;
 
-namespace Redmine.OutlookMailToTask.ViewModel
+namespace Redmine.OutlookAddIn.ViewModel
 {
     public class SelectProjectViewModel : NotifyPropertyBase
     {

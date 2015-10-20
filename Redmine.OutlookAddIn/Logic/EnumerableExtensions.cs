@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Redmine.OutlookMailToTask
+namespace Redmine.OutlookAddIn.Extensions
 {
     public static class EnumerableExtensions
     {

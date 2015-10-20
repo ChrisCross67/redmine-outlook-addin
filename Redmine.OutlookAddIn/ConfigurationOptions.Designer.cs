@@ -1,4 +1,4 @@
-﻿namespace Redmine.OutlookMailToTask
+﻿namespace Redmine.OutlookAddIn
 {
     partial class ConfigurationOptions
     {

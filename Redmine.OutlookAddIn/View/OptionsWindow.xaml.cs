@@ -8,7 +8,7 @@
 // PARTICULAR PURPOSE.
 //-----------------------------------------------------------------------
 
-using Redmine.OutlookMailToTask.Properties;
+using Redmine.OutlookAddIn.Properties;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +22,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace Redmine.OutlookMailToTask
+namespace Redmine.OutlookAddIn
 {
     /// <summary>
     /// Interaction logic for OptionsWindow.xaml
