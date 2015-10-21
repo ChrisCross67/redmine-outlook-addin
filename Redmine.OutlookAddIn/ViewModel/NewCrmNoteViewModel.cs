@@ -7,6 +7,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace Redmine.OutlookAddIn.ViewModel
 {
@@ -34,9 +36,38 @@ namespace Redmine.OutlookAddIn.ViewModel
             }
         }
 
+        private DelegateCommand _addNoteCommand;
+        public ICommand AddNoteCommand
+        {
+            get { return _addNoteCommand; }
+        }
+
+        private bool _contactsLoaded;
+        public bool ContactsLoaded
+        {
+            get { return _contactsLoaded; }
+            private set
+            {
+                _contactsLoaded = value;
+                OnPropertyChanged();
+            }
+        }
+
         public NewCrmNoteViewModel()
         {
+            _addNoteCommand = new DelegateCommand(AddNote, CanAddNote);
+
             ReloadContactsList();
+        }
+
+        private bool CanAddNote(object parameter)
+        {
+            return _contactsLoaded;
+        }
+
+        private void AddNote()
+        {
+            throw new NotImplementedException();
         }
 
         public void ReloadContactsList()
@@ -46,6 +77,8 @@ namespace Redmine.OutlookAddIn.ViewModel
                 if (t.Result != null)
                 {
                     Contacts = t.Result;
+
+                    ContactsLoaded = true;
                 }
             });
         }

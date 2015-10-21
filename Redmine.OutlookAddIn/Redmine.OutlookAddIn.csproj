@@ -136,7 +136,7 @@
   <ItemGroup>
     <Reference Include="Accessibility" />
     <Reference Include="Mach.Wpf.Mvvm, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Mach.Wpf.Mvvm.1.0.0\lib\Mach.Wpf.Mvvm.dll</HintPath>
+      <HintPath>..\packages\Mach.Wpf.Mvvm.1.0.2\lib\Mach.Wpf.Mvvm.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="PresentationCore" />
@@ -200,6 +200,7 @@
     <Compile Include="ConfigurationOptions.Designer.cs">
       <DependentUpon>ConfigurationOptions.cs</DependentUpon>
     </Compile>
+    <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\CountToVisibilityConverter.cs" />
     <Compile Include="Logic\EnumerableExtensions.cs" />
     <Compile Include="Logic\RedmineManagerExtensions.cs" />
