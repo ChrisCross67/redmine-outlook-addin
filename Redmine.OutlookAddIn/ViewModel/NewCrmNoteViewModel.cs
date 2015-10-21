@@ -4,9 +4,11 @@ using Redmine.OutlookAddIn.Properties;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
 
@@ -14,6 +16,17 @@ namespace Redmine.OutlookAddIn.ViewModel
 {
     public class NewCrmNoteViewModel : NotifyPropertyBase
     {
+        private ListCollectionView _filteredContacts;
+        public ListCollectionView FilteredContacts
+        {
+            get { return _filteredContacts; }
+            set
+            {
+                _filteredContacts = value;
+                OnPropertyChanged();
+            }
+        }
+
         private ObservableCollection<ContactViewModel> _contacts;
         public ObservableCollection<ContactViewModel> Contacts
         {
@@ -36,10 +49,27 @@ namespace Redmine.OutlookAddIn.ViewModel
             }
         }
 
+        private string _filter;
+        public string Filter
+        {
+            get { return _filter; }
+            set
+            {
+                _filter = value;
+                OnPropertyChanged();
+            }
+        }
+
         private DelegateCommand _addNoteCommand;
         public ICommand AddNoteCommand
         {
             get { return _addNoteCommand; }
+        }
+
+        private DelegateCommand _filterContactsCommand;
+        public ICommand FilterContactsCommand
+        {
+            get { return _filterContactsCommand; }
         }
 
         private bool _contactsLoaded;
@@ -56,8 +86,35 @@ namespace Redmine.OutlookAddIn.ViewModel
         public NewCrmNoteViewModel()
         {
             _addNoteCommand = new DelegateCommand(AddNote, CanAddNote);
+            _filterContactsCommand = new DelegateCommand(FilterContacts, CanFilterContacts);
 
             ReloadContactsList();
+        }
+
+        private bool CanFilterContacts(object parameter)
+        {
+            return _contactsLoaded;
+        }
+
+        private void FilterContacts()
+        {
+            _filteredContacts.Filter = ContactFilter;
+
+            _filteredContacts.Refresh();
+        }
+
+        private bool ContactFilter(object obj)
+        {
+            ContactViewModel contact = obj as ContactViewModel;
+
+            if (contact == null)
+                return false;
+
+            if (string.IsNullOrEmpty(_filter))
+                return true;
+
+            return CultureInfo.CurrentCulture.CompareInfo.IndexOf(contact.Name, _filter, CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreCase) > -1;
+            //return contact.Name.Contains(_filter);
         }
 
         private bool CanAddNote(object parameter)
@@ -77,6 +134,8 @@ namespace Redmine.OutlookAddIn.ViewModel
                 if (t.Result != null)
                 {
                     Contacts = t.Result;
+                    FilteredContacts = new ListCollectionView(_contacts);
+                    //_filteredContacts.Filter = ContactFilter;
 
                     ContactsLoaded = true;
                 }

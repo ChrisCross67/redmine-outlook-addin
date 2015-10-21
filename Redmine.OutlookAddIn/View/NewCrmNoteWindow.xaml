@@ -22,12 +22,6 @@
             </StackPanel>
         </Grid>
         <Grid>
-            <Grid Visibility="{Binding ContactsLoaded, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter='1'}" VerticalAlignment="Center" HorizontalAlignment="Center">
-                <StackPanel>
-                    <ProgressBar IsIndeterminate="True" />
-                    <Label Content="Loading contacts from Redmine..." />
-                </StackPanel>
-            </Grid>
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -35,8 +29,34 @@
                     <RowDefinition />
                 </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0" Margin="3,3,3,0">Contact</TextBlock>
-                <ListBox Grid.Row="1" ItemsSource="{Binding Contacts}"></ListBox>
+                <TextBlock Grid.Row="0" Margin="3,3,3,0">Select contact</TextBlock>
+                
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox Grid.Column="0" Text="{Binding Filter, Mode=TwoWay}" Margin="3,3,3,3"></TextBox>
+                    
+                    <Button Grid.Column="1"
+                            Margin="3"
+                            Command="{Binding FilterContactsCommand}"
+                            Height="18"
+                            Width="18">
+                        <Grid>
+                            <Path Data="M8.14424701781246,3.05618995722875C7.12007089705441,3.07381576594457 6.09323497862789,3.38365477618321 5.2255420312402,4.0027875333701 3.11227007956478,5.51229089793309 2.74635144324276,8.29055112895116 4.41035743803952,10.2104968458091 6.07324548811886,12.1270875364219 9.13551040739987,12.4595136075889 11.2499112710473,10.9499692350303 13.3643064126489,9.44046396311864 13.729101143789,6.66228717860326 12.0650949105737,4.74234241541966 11.1299295053003,3.66232699450597 9.75211139769528,3.085712137786 8.34899898619625,3.05655592974767 8.28079219908688,3.05513829287633 8.21252533049557,3.05501479205235 8.14424701781246,3.05618995722875z M8.22805114836666,9.13855949136178E-07C10.668668709707,-0.00109195717119093 13.0852698907373,0.978045883742418 14.7117328271386,2.85287398394689 17.0316981896875,5.52926916178807 17.0122623071191,9.19284147318944 14.9277696237085,11.828573170272L21.3330001458642,19.2167548566733 17.8431472405908,21.7100009351645 11.4610843286035,14.3489417463218C8.1207360848901,15.6413831144248 4.11695524306271,14.81031412181 1.76372071356747,12.0999650388633 -1.04924479870823,8.853623333541 -0.43103859572437,4.1554188161765 3.1444131955621,1.60117894705876 4.65327879042599,0.523573818770494 6.44705959410641,0.000798217873345664 8.22805114836666,9.13855949136178E-07z" Stretch="Uniform" Fill="#FF000000" Width="12" Height="12" Margin="0,0,0,0" RenderTransformOrigin="0.5,0.5" />
+                        </Grid>
+                    </Button>
+                </Grid>
+                <ListBox Grid.Row="2" Margin="3,3,3,3" ItemsSource="{Binding FilteredContacts}" ScrollViewer.VerticalScrollBarVisibility="Auto"></ListBox>
+            </Grid>
+
+            <Grid Visibility="{Binding ContactsLoaded, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter='1'}" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <StackPanel>
+                    <ProgressBar IsIndeterminate="True" />
+                    <Label Content="Loading contacts from Redmine..." />
+                </StackPanel>
             </Grid>
         </Grid>
     </DockPanel>
