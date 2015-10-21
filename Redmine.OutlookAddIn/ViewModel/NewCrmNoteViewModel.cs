@@ -16,6 +16,8 @@ namespace Redmine.OutlookAddIn.ViewModel
 {
     public class NewCrmNoteViewModel : NotifyPropertyBase
     {
+        private Dispatcher _uiDispatcher;
+
         private ListCollectionView _filteredContacts;
         public ListCollectionView FilteredContacts
         {
@@ -114,7 +116,6 @@ namespace Redmine.OutlookAddIn.ViewModel
                 return true;
 
             return CultureInfo.CurrentCulture.CompareInfo.IndexOf(contact.Name, _filter, CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreCase) > -1;
-            //return contact.Name.Contains(_filter);
         }
 
         private bool CanAddNote(object parameter)
@@ -129,22 +130,28 @@ namespace Redmine.OutlookAddIn.ViewModel
 
         public void ReloadContactsList()
         {
+            _uiDispatcher = Dispatcher.CurrentDispatcher;
+            _contacts = new ObservableCollection<ContactViewModel>();
+            _filteredContacts = new ListCollectionView(_contacts);
+            _filteredContacts.Filter = ContactFilter;
+
             Task.Factory.StartNew(() => LoadContactsFromRedmine()).ContinueWith((t) =>
             {
                 if (t.Result != null)
                 {
-                    Contacts = t.Result;
-                    FilteredContacts = new ListCollectionView(_contacts);
-                    //_filteredContacts.Filter = ContactFilter;
+                    _uiDispatcher.Invoke(() =>
+                    {
+                        t.Result.ForEach(c => _contacts.Add(c));
+                    });
 
                     ContactsLoaded = true;
                 }
             });
         }
 
-        private ObservableCollection<ContactViewModel> LoadContactsFromRedmine()
+        private List<ContactViewModel> LoadContactsFromRedmine()
         {
-            var contactsList = new ObservableCollection<ContactViewModel>();
+            var contactsList = new List<ContactViewModel>();
 
             IList<Net.Api.Types.Contact> contacts = null;
             try
