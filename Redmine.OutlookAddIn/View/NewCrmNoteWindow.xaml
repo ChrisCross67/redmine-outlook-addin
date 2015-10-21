@@ -49,7 +49,7 @@
                         </Grid>
                     </Button>
                 </Grid>
-                <ListBox Grid.Row="2" Margin="3,3,3,3" ItemsSource="{Binding FilteredContacts}" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                <ListBox Grid.Row="2" Margin="3,3,3,3" HorizontalContentAlignment="Stretch" ItemsSource="{Binding FilteredContacts}" ScrollViewer.VerticalScrollBarVisibility="Auto">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <Grid>
@@ -77,11 +77,11 @@
                                     </Path.Style>
                                 </Path>
 
-                                <!-- company -->
-                                <!--<Path Data="" Stretch="Uniform" Fill="#FF000000" Width="16" Height="16" Margin="0,0,0,0" RenderTransformOrigin="0.5,0.5" />-->
-
                                 <TextBlock Grid.Column="1" Text="{Binding Name}" />
-                                <TextBlock Grid.Column="2" Text="{Binding Id}" Foreground="Gray" HorizontalAlignment="Right" />
+                                <TextBlock Grid.Column="2"  Foreground="Gray" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="10">
+                                    <Run Text="ID: " />
+                                    <Run Text="{Binding Id}" />
+                                </TextBlock>
                             </Grid>
 
                         </DataTemplate>
