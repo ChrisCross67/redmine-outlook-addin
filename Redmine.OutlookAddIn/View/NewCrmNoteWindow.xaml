@@ -30,7 +30,7 @@
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Row="0" Margin="3,3,3,0">Select contact</TextBlock>
-                
+
                 <Grid Grid.Row="1">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
@@ -38,7 +38,7 @@
                     </Grid.ColumnDefinitions>
 
                     <TextBox Grid.Column="0" Text="{Binding Filter, Mode=TwoWay}" Margin="3,3,3,3"></TextBox>
-                    
+
                     <Button Grid.Column="1"
                             Margin="3"
                             Command="{Binding FilterContactsCommand}"
@@ -49,7 +49,44 @@
                         </Grid>
                     </Button>
                 </Grid>
-                <ListBox Grid.Row="2" Margin="3,3,3,3" ItemsSource="{Binding FilteredContacts}" ScrollViewer.VerticalScrollBarVisibility="Auto"></ListBox>
+                <ListBox Grid.Row="2" Margin="3,3,3,3" ItemsSource="{Binding FilteredContacts}" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Path Grid.Column="0" Stretch="Uniform" Fill="#FF000000" Margin="0,0,0,0" RenderTransformOrigin="0.5,0.5">
+                                    <Path.Style>
+                                        <Style TargetType="Path">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding ContactType.Name}" Value="Personal">
+                                                    <Setter Property="Width" Value="12" />
+                                                    <Setter Property="Height" Value="12" />
+                                                    <Setter Property="Data" Value="M16.710899,36.727C20.7409,39.759457 25.747499,41.558827 31.1693,41.558827 36.588501,41.558827 41.596401,39.759457 45.627602,36.727 55.046902,37.911882 62.335999,45.946764 62.335999,55.688923L62.335999,64 0,64 0,55.688923C0,45.946764,7.2904,37.911882,16.710899,36.727z M31.169201,0C40.807137,0 48.622002,7.8164558 48.622002,17.455803 48.622002,27.095258 40.807137,34.909003 31.169201,34.909003 21.528767,34.909003 13.715,27.095258 13.715,17.455803 13.715,7.8164558 21.528767,0 31.169201,0z" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding ContactType.Name}" Value="Company">
+                                                    <Setter Property="Width" Value="16" />
+                                                    <Setter Property="Height" Value="16" />
+                                                    <Setter Property="Data" Value="M12.343644,53.077L12.343644,58.7033 18.960813,58.7033 18.960813,53.077z M2.5428686,53.077L2.5428686,58.7033 9.1600178,58.7033 9.1600178,53.077z M12.343644,41.038002L12.343644,46.662899 18.960813,46.662899 18.960813,41.038002z M2.5428686,41.038002L2.5428686,46.662899 9.1600178,46.662899 9.1600178,41.038002z M24.031356,40.340874L24.031356,45.966057 30.648467,45.966057 30.648467,40.340874z M12.343644,28.9988L12.343644,34.623798 18.960813,34.623798 18.960813,28.9988z M2.5428686,28.9988L2.5428686,34.623798 9.1600178,34.623798 9.1600178,28.9988z M24.031356,28.30191L24.031356,33.926994 30.648467,33.926994 30.648467,28.30191z M0,24.779999L21.496001,24.779999 21.496001,62.922001 0,62.922001z M24.031356,16.261648L24.031356,21.887932 30.648467,21.887932 30.648467,16.261648z M12.343914,16.261648L12.343914,21.887932 18.961024,21.887932 18.961024,16.261648z M24.031356,4.4921155L24.031356,10.117167 30.648467,10.117167 30.648467,4.4921155z M12.343914,4.4921155L12.343914,10.117167 18.961024,10.117167 18.961024,4.4921155z M7.3830005,0L35.608001,0 35.608001,62.893002 22.574276,62.893002 22.574276,23.701626 7.3830005,23.701626z" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Path.Style>
+                                </Path>
+
+                                <!-- company -->
+                                <!--<Path Data="" Stretch="Uniform" Fill="#FF000000" Width="16" Height="16" Margin="0,0,0,0" RenderTransformOrigin="0.5,0.5" />-->
+
+                                <TextBlock Grid.Column="1" Text="{Binding Name}" />
+                                <TextBlock Grid.Column="2" Text="{Binding Id}" Foreground="Gray" HorizontalAlignment="Right" />
+                            </Grid>
+
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
             </Grid>
 
             <Grid Visibility="{Binding ContactsLoaded, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter='1'}" VerticalAlignment="Center" HorizontalAlignment="Center">
