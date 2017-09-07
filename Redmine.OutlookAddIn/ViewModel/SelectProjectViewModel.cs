@@ -6,6 +6,7 @@ using System.Linq;
 using Redmine.OutlookAddIn.Properties;
 using System.Threading.Tasks;
 using Redmine.OutlookAddIn.Extensions;
+using System.Collections.Specialized;
 
 namespace Redmine.OutlookAddIn.ViewModel
 {
@@ -44,7 +45,7 @@ namespace Redmine.OutlookAddIn.ViewModel
             }
         }
 
-        public SelectProjectViewModel() { }
+        public SelectProjectViewModel() {        }
 
         public void ReloadProjectsList()
         {
@@ -68,6 +69,33 @@ namespace Redmine.OutlookAddIn.ViewModel
             }
         }
 
+        private static List<T> GetAllRecords<T>(Net.Api.RedmineManager manager, NameValueCollection parameters = null) where T : class, new()
+        {
+            if (parameters == null)
+            {
+                parameters = new NameValueCollection();
+            }
+
+            IList<T> redmineAllRecordsResult;
+            List<T> allRecords = new List<T>();
+
+            int limit = 100;
+            int offset = 0;
+            do
+            {
+                parameters["offset"] = offset.ToString();
+                parameters["limit"] = limit.ToString();
+
+                redmineAllRecordsResult = manager.GetObjectList<T>(parameters);
+                allRecords.AddRange(redmineAllRecordsResult);
+
+                offset += redmineAllRecordsResult.Count;
+            }
+            while (redmineAllRecordsResult.Count == limit);
+
+            return allRecords;
+        }
+
         private List<ProjectViewModel> LoadProjectsFromRedmine()
         {
             var projectsList = new List<ProjectViewModel>();
@@ -77,8 +105,9 @@ namespace Redmine.OutlookAddIn.ViewModel
             {
                 // connect to redmine
                 Net.Api.RedmineManager manager = new Net.Api.RedmineManager(Settings.Default.RedmineServer, Settings.Default.RedmineApi, Net.Api.MimeFormat.xml);
+                var parameters = new NameValueCollection { { "limit", "100" }, { "include", "trackers,issue_categories" } };
 
-                projects = manager.GetObjectList<Net.Api.Types.Project>(new System.Collections.Specialized.NameValueCollection { { "limit", "100" }, { "include", "trackers,issue_categories" } });
+                projects = GetAllRecords<Net.Api.Types.Project>(manager, parameters);
             }
             catch { }
 
@@ -89,9 +118,12 @@ namespace Redmine.OutlookAddIn.ViewModel
 
             foreach (var project in projects)
             {
-                ProjectViewModel projectViewModel = new ProjectViewModel();
-                projectViewModel.Id = project.Id;
-                projectViewModel.Name = project.Name;
+                ProjectViewModel projectViewModel = new ProjectViewModel
+                {
+                    Id = project.Id,
+                    Name = project.Name
+                };
+
                 if (project.Parent != null)
                 {
                     projectViewModel.ParentId = project.Parent.Id;
@@ -101,9 +133,11 @@ namespace Redmine.OutlookAddIn.ViewModel
                 {
                     foreach (var customField in project.CustomFields)
                     {
-                        CustomFieldViewModel customFieldViewModel = new CustomFieldViewModel();
-                        customFieldViewModel.Id = customField.Id;
-                        customFieldViewModel.Name = customField.Name;
+                        CustomFieldViewModel customFieldViewModel = new CustomFieldViewModel
+                        {
+                            Id = customField.Id,
+                            Name = customField.Name
+                        };
 
                         projectViewModel.CustomFields.Add(customFieldViewModel);
                     }
@@ -113,9 +147,11 @@ namespace Redmine.OutlookAddIn.ViewModel
                 {
                     foreach (var tracker in project.Trackers)
                     {
-                        TrackerViewModel trackerViewModel = new TrackerViewModel();
-                        trackerViewModel.Id = tracker.Id;
-                        trackerViewModel.Name = tracker.Name;
+                        TrackerViewModel trackerViewModel = new TrackerViewModel
+                        {
+                            Id = tracker.Id,
+                            Name = tracker.Name
+                        };
 
                         projectViewModel.Trackers.Add(trackerViewModel);
 
@@ -131,9 +167,11 @@ namespace Redmine.OutlookAddIn.ViewModel
                 {
                     foreach (var issueCategory in project.IssueCategories)
                     {
-                        IssueCategoryViewModel issueCategoryViewModel = new IssueCategoryViewModel();
-                        issueCategoryViewModel.Id = issueCategory.Id;
-                        issueCategoryViewModel.Name = issueCategory.Name;
+                        IssueCategoryViewModel issueCategoryViewModel = new IssueCategoryViewModel
+                        {
+                            Id = issueCategory.Id,
+                            Name = issueCategory.Name
+                        };
 
                         projectViewModel.IssueCategories.Add(issueCategoryViewModel);
                     }

@@ -159,6 +159,8 @@ namespace Redmine.OutlookAddIn.ViewModel
                 // connect to redmine
                 Net.Api.RedmineManager manager = new Net.Api.RedmineManager(Settings.Default.RedmineServer, Settings.Default.RedmineApi, Net.Api.MimeFormat.xml);
 
+                var contact = manager.GetObject<Net.Api.Types.Contact>("1477", new System.Collections.Specialized.NameValueCollection { });
+
                 contacts = manager.GetAllObjectList<Net.Api.Types.Contact>(new System.Collections.Specialized.NameValueCollection { });
             }
             catch { }

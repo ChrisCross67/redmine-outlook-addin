@@ -49,7 +49,12 @@
                         </Grid>
                     </Button>
                 </Grid>
-                <ListBox Grid.Row="2" Margin="3,3,3,3" HorizontalContentAlignment="Stretch" ItemsSource="{Binding FilteredContacts}" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                <ListBox Grid.Row="2" 
+                         Margin="3,3,3,3" 
+                         ScrollViewer.VerticalScrollBarVisibility="Auto"
+                         HorizontalContentAlignment="Stretch" 
+                         ItemsSource="{Binding FilteredContacts}" 
+                         SelectedItem="{Binding SelectedContact}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <Grid>
